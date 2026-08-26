@@ -1,299 +1,296 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
   ArrowLeft,
   Building2,
-  Clock,
-  ExternalLink,
+  Calendar,
+  CreditCard,
+  Mail,
   MapPin,
+  Phone,
+  ShieldAlert,
   Users,
-  Receipt,
-  CheckCircle2,
+  ExternalLink,
+  Clock,
+  Sparkles,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { BranchStatusBadge } from "@/features/branches/components/branch-status-badge";
-import { RecordPaymentDialog } from "@/features/branches/components/record-payment-dialog";
-import { BranchDetail } from "@/features/branches/types";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useBranch } from "@/features/branches/api/use-branches";
 
-// Mock data generator for deep detail view
-const MOCK_BRANCH_DETAIL: BranchDetail = {
-  id: "br_01",
-  name: "Blue Mist Pure Water",
-  slug: "blue-mist",
-  city: "Islamabad",
-  address: "Plot 12-B, Industrial Area I-9",
-  industry: "WATER",
-  status: "ACTIVE",
-  ownerName: "Qamar Abbas",
-  ownerPhone: "+92 300 1234567",
-  ownerEmail: "qamar@bluemist.com",
-  subscriptionPlan: "MONTHLY",
-  monthlyFee: 8000,
-  currentPeriodStart: "10 Aug 2026",
-  currentPeriodEnd: "10 Sep 2026",
-  daysRemaining: 16,
-  maxUsersLimit: 15,
-  metrics: {
-    totalCustomers: 340,
-    totalOrdersDelivered: 4210,
-    activeAssetsInCirculation: 1250,
-  },
-  users: [
-    { id: "u_1", name: "Qamar Abbas", email: "qamar@bluemist.com", phone: "+923001234567", role: "OWNER", isActive: true, createdAt: "10 Aug 2026" },
-    { id: "u_2", name: "Shahzad Manager", email: "shahzad@bluemist.com", phone: "+923019998877", role: "MANAGER", isActive: true, createdAt: "11 Aug 2026" },
-    { id: "u_3", name: "Aslam Rider", email: "aslam@droply.local", phone: "+923215551122", role: "RIDER", isActive: true, createdAt: "12 Aug 2026" },
-    { id: "u_4", name: "Rashid Rider", email: "rashid@droply.local", phone: "+923454443322", role: "RIDER", isActive: true, createdAt: "12 Aug 2026" },
-    { id: "u_5", name: "Tariq Rider", email: "tariq@droply.local", phone: "+923337776655", role: "RIDER", isActive: true, createdAt: "15 Aug 2026" },
-  ],
-  invoices: [
-    { id: "inv_1", invoiceNumber: "INV-2026-08-001", amount: 8000, billingPeriod: "10 Aug 2026 - 10 Sep 2026", paidAt: "10 Aug 2026", paymentMethod: "BANK_TRANSFER", status: "PAID" },
-    { id: "inv_0", invoiceNumber: "INV-2026-07-001", amount: 8000, billingPeriod: "10 Jul 2026 - 10 Aug 2026", paidAt: "10 Jul 2026", paymentMethod: "BANK_TRANSFER", status: "PAID" },
-  ],
-};
+// Dynamically load map component without SSR
+const BranchMap = dynamic(
+  () => import("@/features/branches/components/branch-map"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full min-h-80 w-full items-center justify-center rounded-xl border bg-muted/40">
+        <p className="text-xs text-muted-foreground animate-pulse">
+          Loading GPS Dispatch Map...
+        </p>
+      </div>
+    ),
+  }
+);
 
-interface BranchDetailPageProps {
-  params: Promise<{ branchId: string }>;
-}
+export default function BranchDetailPage() {
+  const params = useParams();
+  const branchId = params.branchId as string;
+  const { data: branch, isLoading, isError, error } = useBranch(branchId);
 
-export default async function BranchDetailPage({ params }: BranchDetailPageProps) {
-  const resolvedParams = await params;
-  const branch = MOCK_BRANCH_DETAIL;
+  if (isLoading) {
+    return (
+      <div className="flex h-96 w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <p className="text-xs text-muted-foreground">Loading branch registry...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !branch) {
+    return (
+      <div className="p-8">
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-6 text-center">
+          <ShieldAlert className="mx-auto h-8 w-8 text-destructive mb-2" />
+          <h2 className="text-base font-semibold text-destructive">
+            Branch Record Not Found
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            {error?.message || "The requested tenant plant could not be resolved."}
+          </p>
+          <div className="mt-4">
+            <Link href="/branches" className={buttonVariants({ variant: "outline", size: "sm" })}>
+              <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
+              Back to Branch Registry
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const lat = Number(branch.latitude) || 33.6844;
+  const lng = Number(branch.longitude) || 73.0479;
+  const sub = branch.subscription;
+  const billingAmt = sub?.monthlyFee ? Number(sub.monthlyFee) : 8000;
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Top Breadcrumb & Action Row */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-6 p-6">
+      {/* Top Breadcrumb & Status Navigation */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="icon" className="h-8 w-8" asChild>
-            <Link href="/branches">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
+          <Link
+            href="/branches"
+            className={buttonVariants({ variant: "outline", size: "icon-sm" })}
+            title="Back to Registry"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-xl font-bold tracking-tight">{branch.name}</h1>
-              <BranchStatusBadge status={branch.status} />
-              <Badge variant="outline" className="text-[10px] font-mono uppercase">{branch.industry}</Badge>
+              <h1 className="text-xl font-bold tracking-tight text-foreground">
+                {branch.name}
+              </h1>
+              <Badge
+                variant={
+                  branch.status === "ACTIVE"
+                    ? "active"
+                    : branch.status === "PAST_DUE"
+                    ? "secondary"
+                    : "destructive"
+                }
+                className="text-[11px]"
+              >
+                {branch.status}
+              </Badge>
+              <Badge variant="outline" className="font-mono text-[10px] uppercase">
+                {branch.industry}
+              </Badge>
             </div>
-            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-              <MapPin className="h-3 w-3" /> {branch.address}, {branch.city}
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Tenant ID: <span className="font-mono">{branch.id}</span> • Slug: <span className="font-mono">{branch.slug}</span>
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Changed from onClick to a standard asChild Link */}
-          <Button variant="outline" size="sm" className="text-xs h-9 gap-1.5" asChild>
-            <a
-              href={`https://${branch.slug}.droplyhq.com`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ExternalLink className="h-3.5 w-3.5" />
-              Launch Portal
-            </a>
+          <Button variant="outline" size="sm" onClick={() => window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank")}>
+            <ExternalLink className="h-3.5 w-3.5 mr-1" />
+            Open Google Maps
           </Button>
-          <RecordPaymentDialog
-            branchId={branch.id}
-            branchName={branch.name}
-            defaultAmount={branch.monthlyFee}
-          />
+          <Button variant="create" size="sm">
+            <Sparkles className="h-3.5 w-3.5 mr-1" />
+            Edit Settings
+          </Button>
         </div>
       </div>
 
-      {/* Subscription Banner & Metrics Grid */}
+      {/* 4 Stat Overview Badges */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Days Left Card */}
-        <Card className="border shadow-none bg-card">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Billing Status</p>
-              <h3 className="text-2xl font-bold mt-1 text-foreground">
-                {branch.daysRemaining} Days
-              </h3>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                Renews on {branch.currentPeriodEnd}
-              </p>
-            </div>
-            <div className="p-2.5 rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
-              <Clock className="h-5 w-5" />
-            </div>
+        <Card className="shadow-xs">
+          <CardHeader className="pb-2">
+            <CardDescription className="text-xs font-medium">Subscription Tier</CardDescription>
+            <CardTitle className="text-xl font-bold capitalize flex items-center justify-between">
+              <span>{sub?.plan || "TRIAL"}</span>
+              <CreditCard className="h-4 w-4 text-primary" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-[11px] text-muted-foreground">
+              Auto-Renew: <span className="font-semibold text-foreground">{sub?.autoRenew ? "Enabled" : "Manual"}</span>
+            </p>
           </CardContent>
         </Card>
 
-        {/* User Seats Allocation */}
-        <Card className="border shadow-none bg-card">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Staff Quota</p>
-              <h3 className="text-2xl font-bold mt-1 text-foreground">
-                {branch.users.length} / {branch.maxUsersLimit}
-              </h3>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                {branch.maxUsersLimit - branch.users.length} available seats
-              </p>
-            </div>
-            <div className="p-2.5 rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400">
-              <Users className="h-5 w-5" />
-            </div>
+        <Card className="shadow-xs">
+          <CardHeader className="pb-2">
+            <CardDescription className="text-xs font-medium">Billing Rate</CardDescription>
+            <CardTitle className="text-xl font-bold font-mono text-emerald-600">
+              PKR {billingAmt.toLocaleString()}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-[11px] text-muted-foreground">
+              Grace Period: <span className="font-semibold text-foreground">{sub?.gracePeriodDays ?? 3} Days</span>
+            </p>
           </CardContent>
         </Card>
 
-        {/* Total Deliveries Metric */}
-        <Card className="border shadow-none bg-card">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Total Drops</p>
-              <h3 className="text-2xl font-bold mt-1 text-foreground">
-                {branch.metrics.totalOrdersDelivered.toLocaleString()}
-              </h3>
-              <p className="text-[11px] text-muted-foreground mt-0.5">Completed orders</p>
-            </div>
-            <div className="p-2.5 rounded-lg bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-400">
-              <CheckCircle2 className="h-5 w-5" />
-            </div>
+        <Card className="shadow-xs">
+          <CardHeader className="pb-2">
+            <CardDescription className="text-xs font-medium">Staff & Fleet Quota</CardDescription>
+            <CardTitle className="text-xl font-bold flex items-center justify-between">
+              <span>{branch.maxUsersLimit} Seats</span>
+              <Users className="h-4 w-4 text-primary" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-[11px] text-muted-foreground">Riders, managers & drivers</p>
           </CardContent>
         </Card>
 
-        {/* Returnable Assets Circulating */}
-        <Card className="border shadow-none bg-card">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Assets in Market</p>
-              <h3 className="text-2xl font-bold mt-1 text-foreground">
-                {branch.metrics.activeAssetsInCirculation.toLocaleString()}
-              </h3>
-              <p className="text-[11px] text-muted-foreground mt-0.5">Bottles / Cylinders held</p>
-            </div>
-            <div className="p-2.5 rounded-lg bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400">
-              <Building2 className="h-5 w-5" />
-            </div>
+        <Card className="shadow-xs">
+          <CardHeader className="pb-2">
+            <CardDescription className="text-xs font-medium">Current Period Ends</CardDescription>
+            <CardTitle className="font-bold flex items-center justify-between text-base">
+              <span>
+                {sub?.currentPeriodEnd
+                  ? new Date(sub.currentPeriodEnd).toLocaleDateString("en-US", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })
+                  : "N/A"}
+              </span>
+              <Clock className="h-4 w-4 text-primary" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-[11px] text-muted-foreground">Cycle renewal due date</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Main Grid: Staff Management + Invoices History */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Managers & Riders List */}
-        <Card className="border shadow-none bg-card lg:col-span-2">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-base font-semibold">Assigned Staff & Riders</CardTitle>
-                <CardDescription className="text-xs">
-                  Active Clerk authentication accounts tied to this tenant branch ({branch.users.length}/{branch.maxUsersLimit}).
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="text-xs">Staff Member</TableHead>
-                  <TableHead className="text-xs">Contact</TableHead>
-                  <TableHead className="text-xs">Role</TableHead>
-                  <TableHead className="text-xs">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {branch.users.map((user) => (
-                  <TableRow key={user.id} className="hover:bg-muted/30">
-                    <TableCell className="font-medium text-xs">
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-foreground">{user.name}</span>
-                        <span className="text-[10px] text-muted-foreground">{user.email}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-xs font-mono">{user.phone}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="text-[10px] font-mono">
-                        {user.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-medium">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                        Active
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-        {/* Right 1 Col: Billing, Invoices & Owner Info Card */}
-        <div className="flex flex-col gap-6">
-          {/* Owner Quick Contact */}
-          <Card className="border shadow-none bg-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold">Owner Contact</CardTitle>
+      {/* Main Grid: Info + Geolocation Map */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        {/* Left Column: Plant and Owner Credentials (5 Cols) */}
+        <div className="space-y-6 lg:col-span-5">
+          {/* Owner Details Card */}
+          <Card>
+            <CardHeader className="pb-3 border-b">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-primary" />
+                Plant Ownership & Contact
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Name:</span>
-                <span className="font-medium text-foreground">{branch.ownerName}</span>
+            <CardContent className="pt-4 space-y-3.5 text-xs">
+              <div className="flex justify-between items-center pb-2 border-b border-dashed">
+                <span className="text-muted-foreground">Owner Full Name</span>
+                <span className="font-semibold text-foreground">{branch.ownerName}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Phone:</span>
+              <div className="flex justify-between items-center pb-2 border-b border-dashed">
+                <span className="text-muted-foreground flex items-center gap-1.5">
+                  <Mail className="h-3.5 w-3.5" /> Email
+                </span>
+                <span className="font-mono text-foreground">{branch.ownerEmail}</span>
+              </div>
+              <div className="flex justify-between items-center pb-2 border-b border-dashed">
+                <span className="text-muted-foreground flex items-center gap-1.5">
+                  <Phone className="h-3.5 w-3.5" /> WhatsApp/Phone
+                </span>
                 <span className="font-mono text-foreground">{branch.ownerPhone}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Email:</span>
-                <span className="text-foreground">{branch.ownerEmail}</span>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5" /> Registered Date
+                </span>
+                <span className="text-foreground">
+                  {new Date(branch.createdAt).toLocaleDateString()}
+                </span>
               </div>
             </CardContent>
           </Card>
 
-          {/* Past Payments / Invoice History */}
-          <Card className="border shadow-none bg-card flex-1">
-            <CardHeader className="pb-3">
+          {/* Physical Address Card */}
+          <Card>
+            <CardHeader className="pb-3 border-b">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                <Receipt className="h-4 w-4 text-muted-foreground" />
-                Subscription Invoices
+                <MapPin className="h-4 w-4 text-primary" />
+                Physical Facility Details
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead className="text-xs">Invoice</TableHead>
-                    <TableHead className="text-xs">Amount</TableHead>
-                    <TableHead className="text-xs">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {branch.invoices.map((inv) => (
-                    <TableRow key={inv.id} className="hover:bg-muted/30">
-                      <TableCell className="text-xs">
-                        <div className="flex flex-col font-mono text-[11px]">
-                          <span className="font-medium text-foreground">{inv.invoiceNumber}</span>
-                          <span className="text-[10px] text-muted-foreground">{inv.paidAt}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-xs font-mono font-medium">
-                        PKR {inv.amount.toLocaleString()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-[10px] bg-emerald-50 text-emerald-700 dark:bg-emerald-950 border-emerald-200">
-                          {inv.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <CardContent className="pt-4 space-y-3 text-xs">
+              <div>
+                <span className="text-muted-foreground block mb-0.5">Facility Street Address</span>
+                <p className="font-medium text-foreground bg-muted/40 p-2.5 rounded-md border">
+                  {branch.address}, {branch.city}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 pt-1 font-mono">
+                <div className="bg-muted/30 p-2 rounded border">
+                  <span className="text-[10px] text-muted-foreground block">Latitude</span>
+                  <span className="text-xs font-semibold">{lat}</span>
+                </div>
+                <div className="bg-muted/30 p-2 rounded border">
+                  <span className="text-[10px] text-muted-foreground block">Longitude</span>
+                  <span className="text-xs font-semibold">{lng}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column: Live GPS Dispatch Map (7 Cols) */}
+        <div className="lg:col-span-7 flex flex-col">
+          <Card className="flex-1 flex flex-col">
+            <CardHeader className="pb-3 border-b">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-emerald-600" />
+                Live GPS Dispatch Hub
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Base location for automatic delivery radius calculation and rider geo-fencing.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-4 flex-1 min-h-95">
+              <BranchMap
+                latitude={lat}
+                longitude={lng}
+                branchName={branch.name}
+                address={branch.address}
+              />
             </CardContent>
           </Card>
         </div>

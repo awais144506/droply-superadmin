@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-client"; // Adjust path to your apiClient file
+import { apiClient } from "@/lib/api-client";
 import { BranchEntity, CreateBranchInput } from "@/types/branch";
 
 export const branchKeys = {
@@ -8,12 +8,19 @@ export const branchKeys = {
   detail: (id: string) => [...branchKeys.all, "detail", id] as const,
 };
 
-// GET /api/v1/super-admin/branches
+// GET /branches
 async function getBranches(): Promise<BranchEntity[]> {
-  return apiClient.get("/branches");
+  const data: any = await apiClient.get("/branches");
+  return Array.isArray(data) ? data : data?.branches || data?.data || [];
 }
 
-// POST /api/v1/super-admin/branches
+// GET /branches/:id
+async function getBranchById(id: string): Promise<BranchEntity> {
+  const data: any = await apiClient.get(`/branches/${id}`);
+  return data?.branch || data;
+}
+
+// POST /branches
 async function createBranch(dto: CreateBranchInput): Promise<any> {
   return apiClient.post("/branches", {
     ...dto,
@@ -24,23 +31,40 @@ async function createBranch(dto: CreateBranchInput): Promise<any> {
   });
 }
 
-// Hook: Fetch All Branches
+// Hook: Fetch all branches
 export function useBranches() {
   return useQuery({
     queryKey: branchKeys.lists(),
     queryFn: getBranches,
+    staleTime: 1000 * 60 * 2, // 2 minutes
+  });
+}
+
+// Hook: Fetch single branch by ID
+export function useBranch(branchId: string) {
+  return useQuery({
+    queryKey: branchKeys.detail(branchId),
+    queryFn: () => getBranchById(branchId),
+    enabled: Boolean(branchId),
     staleTime: 1000 * 60 * 2,
   });
 }
 
-// Hook: Provision Branch Mutation
+// Hook: Provision new branch
 export function useCreateBranch() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createBranch,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Invalidate the list cache to trigger an immediate background refresh
       queryClient.invalidateQueries({ queryKey: branchKeys.lists() });
+
+      // If created branch ID is returned, pre-populate or invalidate its detail query
+      const newId = data?.branch?.id || data?.id;
+      if (newId) {
+        queryClient.invalidateQueries({ queryKey: branchKeys.detail(newId) });
+      }
     },
   });
 }

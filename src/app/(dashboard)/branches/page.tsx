@@ -1,8 +1,11 @@
 "use client";
-
-import { MapPin, AlertCircle, RefreshCw } from "lucide-react";
+import Link from "next/link";
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { MapPin, AlertCircle, RefreshCw, Search, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -17,11 +20,40 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CreateBranchDialog } from "@/features/branches/components/create-branch-dialog";
 import { useBranches } from "@/features/branches/api/use-branches";
 
 export default function BranchesPage() {
-  const { data: branches = [], isLoading, isError, error, refetch, isFetching } = useBranches();
+  const router = useRouter();
+  const {
+    data: branches = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isFetching,
+  } = useBranches();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+
+  const filteredBranches = useMemo(() => {
+    return branches.filter((branch) => {
+      const query = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !query ||
+        branch.name?.toLowerCase().includes(query) ||
+        branch.city?.toLowerCase().includes(query) ||
+        branch.address?.toLowerCase().includes(query) ||
+        branch.ownerName?.toLowerCase().includes(query) ||
+        branch.ownerEmail?.toLowerCase().includes(query) ||
+        branch.industry?.toLowerCase().includes(query);
+
+      const matchesStatus =
+        statusFilter === "ALL" || branch.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [branches, searchQuery, statusFilter]);
 
   return (
     <div className="space-y-6 p-6">
@@ -44,7 +76,14 @@ export default function BranchesPage() {
           >
             <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           </Button>
-          <CreateBranchDialog />
+
+          <Link
+            href="/branches/create-new"
+            className={buttonVariants({ variant: "create", size: "sm" })}
+          >
+            <Plus className="h-4 w-4 mr-1.5" />
+            Create New Branch
+          </Link>
         </div>
       </div>
 
@@ -58,10 +97,36 @@ export default function BranchesPage() {
 
       {/* Main Data Table Card */}
       <Card>
-        <CardHeader className="px-6 py-4 border-b">
+        <CardHeader className="px-6 py-4 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <CardTitle className="text-base font-semibold">
-            Registered Branches ({branches.length})
+            Registered Branches ({filteredBranches.length})
           </CardTitle>
+
+          {/* Search and Status Filters */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Search branches, owners, cities..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-9 w-60 rounded-md border border-input bg-background pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              />
+            </div>
+
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              aria-label="Filter branches by status"
+              className="h-9 rounded-md border border-input bg-background px-3 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="ACTIVE">Active</option>
+              <option value="PAST_DUE">Past Due</option>
+              <option value="SUSPENDED">Suspended</option>
+            </select>
+          </div>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
@@ -77,19 +142,29 @@ export default function BranchesPage() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-32 text-center text-sm text-muted-foreground">
+                  <TableCell colSpan={5} className="h-32 text-center text-sm text-muted-foreground">
                     Fetching tenant branches from Droply API...
                   </TableCell>
                 </TableRow>
               ) : branches.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-32 text-center text-sm text-muted-foreground">
+                  <TableCell colSpan={5} className="h-32 text-center text-sm text-muted-foreground">
                     No branches registered yet. Click &quot;Provision Branch&quot; to create the first tenant.
                   </TableCell>
                 </TableRow>
+              ) : filteredBranches.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-32 text-center text-sm text-muted-foreground">
+                    No branches match your search or filter criteria.
+                  </TableCell>
+                </TableRow>
               ) : (
-                branches.map((branch) => (
-                  <TableRow key={branch.id}>
+                filteredBranches.map((branch) => (
+                  <TableRow
+                    key={branch.id}
+                    onClick={() => router.push(`/branches/${branch.id}`)}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                  >
                     {/* Branch Info */}
                     <TableCell className="pl-6 font-medium">
                       <div className="flex flex-col">
@@ -108,7 +183,7 @@ export default function BranchesPage() {
                         <span className="font-medium text-foreground">
                           {branch.city}
                         </span>
-                        <span className="text-muted-foreground truncate max-w-[200px]">
+                        <span className="text-muted-foreground truncate max-w-50">
                           {branch.address}
                         </span>
                         <span className="font-mono text-[10px] text-primary/80 flex items-center gap-1">
@@ -140,7 +215,6 @@ export default function BranchesPage() {
                         >
                           {branch.subscription?.plan || "TRIAL"}
                         </Badge>
-                
                       </div>
                     </TableCell>
 
@@ -151,15 +225,14 @@ export default function BranchesPage() {
                           branch.status === "ACTIVE"
                             ? "active"
                             : branch.status === "PAST_DUE"
-                            ? "secondary"
-                            : "destructive"
+                              ? "secondary"
+                              : "destructive"
                         }
                         className="text-[11px]"
                       >
                         {branch.status}
                       </Badge>
                     </TableCell>
-
                   </TableRow>
                 ))
               )}
