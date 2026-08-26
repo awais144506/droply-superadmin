@@ -32,7 +32,7 @@ export function NavMain() {
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    asChild
+                    
                     isActive={isActive}
                     tooltip={item.title}
                     className="w-full"

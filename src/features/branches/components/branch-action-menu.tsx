@@ -18,10 +18,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Branch } from "../types";
+import { BranchDetail } from "../types";
 
 interface BranchActionMenuProps {
-  branch: Branch;
+  branch: BranchDetail;
 }
 
 export function BranchActionMenu({ branch }: BranchActionMenuProps) {

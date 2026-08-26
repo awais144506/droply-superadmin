@@ -54,7 +54,7 @@ export function RecordPaymentDialog({ branchName, defaultAmount }: RecordPayment
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger>
         <Button className="gap-2 text-xs font-semibold h-9">
           <CreditCard className="h-4 w-4" />
           Update / Log Payment

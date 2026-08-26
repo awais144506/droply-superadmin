@@ -101,7 +101,7 @@ export function CreateBranchDialog({ onSuccess }: CreateBranchDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger>
         <Button
           variant="create"
           className="gap-2 shadow-sm">
