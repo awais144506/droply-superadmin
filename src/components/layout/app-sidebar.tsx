@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 import { BrandHeader } from "./brand-header";
 import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
 import SideFooter from "./side-footer";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
@@ -20,7 +21,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <NavMain />
             </SidebarContent>
             <SidebarFooter>
-                <SideFooter />
+                <NavUser />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>
