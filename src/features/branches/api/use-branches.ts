@@ -26,7 +26,6 @@ async function createBranch(dto: CreateBranchInput): Promise<any> {
     ...dto,
     latitude: Number(dto.latitude),
     longitude: Number(dto.longitude),
-    monthlyFee: Number(dto.monthlyFee),
     maxUsersLimit: Number(dto.maxUsersLimit),
   });
 }
