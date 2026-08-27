@@ -79,8 +79,8 @@ export default function BranchMap({
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-xl border bg-muted">
-      <div ref={mapContainerRef} className="h-full w-full z-0 min-h-[320px]" />
-      <div className="absolute top-3 left-3 z-[400] rounded-lg border bg-background/90 px-3 py-1.5 shadow-sm backdrop-blur-sm">
+      <div ref={mapContainerRef} className="h-full w-full z-0 min-h-80" />
+      <div className="absolute top-3 left-3 z-400 rounded-lg border bg-background/90 px-3 py-1.5 shadow-sm backdrop-blur-sm">
         <p className="text-[11px] font-mono font-medium text-foreground">
           GPS: {latitude.toFixed(5)}, {longitude.toFixed(5)}
         </p>

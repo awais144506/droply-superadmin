@@ -37,7 +37,7 @@ export const superAdminNavigation: NavGroup[] = [
       },
       {
         title: "Subscriptions & Invoices",
-        url: "#",
+        url: "/subscriptions",
         icon: Receipt,
       },
     ],
