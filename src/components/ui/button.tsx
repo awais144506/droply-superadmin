@@ -22,6 +22,7 @@ const buttonVariants = cva(
           "hover:bg-muted/80 hover:text-foreground active:bg-muted dark:hover:bg-muted/50",
         link:
           "text-primary underline-offset-4 hover:underline p-0 h-auto font-normal",
+        normal: "bg-gray-200 text-black"
       },
       size: {
         default: "h-9 px-4 py-2 gap-2 text-sm",
@@ -40,7 +41,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 

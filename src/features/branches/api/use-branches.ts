@@ -67,4 +67,21 @@ export function useCreateBranch() {
       }
     },
   });
+
+
+}
+// Hook: Update Branch Details Mutation
+export function useUpdateBranch() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<CreateBranchInput> }) => {
+      return apiClient.patch(`/branches/${id}`, data);
+    },
+    onSuccess: (_, variables) => {
+      // Refresh single branch detail and branches list cache
+      queryClient.invalidateQueries({ queryKey: branchKeys.detail(variables.id) });
+      queryClient.invalidateQueries({ queryKey: branchKeys.lists() });
+    },
+  });
 }

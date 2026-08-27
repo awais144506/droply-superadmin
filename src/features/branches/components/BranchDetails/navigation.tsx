@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Settings2, PenIcon } from "lucide-react";
+import { ArrowLeft, Settings2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { BranchEntity } from "@/types/branch";
+import { EditBranchDialog } from "./EditBranch/edit-form";
 
 interface TopNavigationBranchProps {
     branch: BranchEntity;
@@ -50,15 +51,14 @@ export default function TopNavigationBranch({ branch }: TopNavigationBranchProps
             <div className="flex items-center gap-2">
                 <Link
                     href={`/subscriptions/${branch.id}`}
-                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                    className={buttonVariants({ variant: "normal", size: "sm" })}
                 >
                     <Settings2 className="h-3.5 w-3.5 mr-1" />
                     Subscription Settings
                 </Link>
-                <Button variant="create" size="sm">
-                    <PenIcon className="h-3.5 w-3.5 mr-1" />
-                    Edit Branch
-                </Button>
+
+                {/* Edit Dialog Trigger & Form */}
+                <EditBranchDialog branch={branch} />
             </div>
         </div>
     );
