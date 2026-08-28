@@ -10,7 +10,6 @@ import {
   TrendingUp,
   Clock,
   AlertTriangle,
-  ArrowUpRight,
   Sparkles,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

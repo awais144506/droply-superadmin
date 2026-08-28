@@ -53,7 +53,7 @@ export default function CreateBranchPage() {
   });
 
   const onSubmit = (data: CreateBranchFormData) => {
-    createBranch(data, {
+    createBranch(data as any, {
       onSuccess: () => {
         toast.success("Branch created successfully!");
         router.push("/branches");
@@ -224,9 +224,9 @@ export default function CreateBranchPage() {
                     className="w-full h-9 rounded-md border border-input bg-background px-3 text-xs focus:ring-1 focus:ring-ring outline-none cursor-pointer"
                   >
                     <option value="WATER">Water Purification</option>
-                    <option value="BEVERAGES">Beverages</option>
-                    <option value="DAIRY">Dairy</option>
-                    <option value="LOGISTICS">Logistics Hub</option>
+                    <option value="LPG">LPG Gas Distribution</option>
+                    <option value="DAIRY">Dairy Distribution</option>
+                    <option value="COMMERCIAL_DISTRIBUTION">Commercial Distribution</option>
                   </select>
                   {errors.industry && (
                     <p className="text-[10px] text-destructive">{errors.industry.message}</p>

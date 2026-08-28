@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BranchDetail, BranchStatus, IndustryType, SubscriptionPlan } from "../types";
+import { BranchDetail, IndustryType, SubscriptionPlan } from "../types";
 import { BranchStatusBadge } from "./branch-status-badge";
 
 interface BranchesDataTableProps {
@@ -157,7 +157,7 @@ export function BranchesDataTable({ initialData }: BranchesDataTableProps) {
                     <div className="flex flex-col items-start gap-1">
                       {getSubscriptionBadge(branch.subscriptionPlan)}
                       <span className="text-[11px] font-mono text-muted-foreground">
-                        PKR {branch.monthlyFee.toLocaleString()}/mo
+                        PKR {branch.billingAmount.toLocaleString()}/mo
                       </span>
                     </div>
                   </TableCell>

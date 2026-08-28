@@ -10,13 +10,10 @@ import {
   Receipt,
   ShieldCheck,
   AlertCircle,
-  CheckCircle2,
-  AlertTriangle,
   Download,
   Building2,
   User,
   Sparkles,
-  ArrowUpRight,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -42,7 +39,7 @@ export default function SubscriptionDetailPage() {
   const router = useRouter();
   const branchId = params.branchId as string;
 
-  const { data: branch, isLoading, isError, error, refetch } = useBranch(branchId);
+  const { data: branch, isLoading, isError, error } = useBranch(branchId);
 
   if (isLoading) {
     return (
@@ -82,8 +79,8 @@ export default function SubscriptionDetailPage() {
 
   const sub = branch.subscription;
   const plan = sub?.plan || "TRIAL";
-  const billingAmount = Number(sub?.billingAmount || sub?.monthlyFee || 8000);
-  const invoices = branch.invoices || [];
+  const billingAmount = Number(sub?.billingAmount || sub?.billingAmount || 8000);
+  const invoices = (branch as any).invoices ?? [];
 
   // Calculate cycle period days & progress
   const startDate = sub?.currentPeriodStart ? new Date(sub.currentPeriodStart) : new Date(branch.createdAt);
@@ -115,8 +112,8 @@ export default function SubscriptionDetailPage() {
                   plan === "YEARLY"
                     ? "default"
                     : plan === "MONTHLY"
-                    ? "secondary"
-                    : "outline"
+                      ? "secondary"
+                      : "outline"
                 }
                 className="font-mono text-[10px] uppercase"
               >
@@ -127,8 +124,8 @@ export default function SubscriptionDetailPage() {
                   branch.status === "ACTIVE"
                     ? "default"
                     : branch.status === "PAST_DUE"
-                    ? "secondary"
-                    : "destructive"
+                      ? "secondary"
+                      : "destructive"
                 }
                 className="text-[11px]"
               >
@@ -239,9 +236,8 @@ export default function SubscriptionDetailPage() {
         <CardContent className="pt-4">
           <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
             <div
-              className={`h-full transition-all duration-500 rounded-full ${
-                progressPercent > 85 ? "bg-amber-500" : "bg-emerald-600"
-              }`}
+              className={`h-full transition-all duration-500 rounded-full ${progressPercent > 85 ? "bg-amber-500" : "bg-emerald-600"
+                }`}
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -350,8 +346,8 @@ export default function SubscriptionDetailPage() {
                               inv.status === "PAID"
                                 ? "default"
                                 : inv.status === "PENDING"
-                                ? "secondary"
-                                : "destructive"
+                                  ? "secondary"
+                                  : "destructive"
                             }
                             className="text-[10px]"
                           >
