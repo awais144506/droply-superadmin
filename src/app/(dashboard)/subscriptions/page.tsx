@@ -56,7 +56,7 @@ export default function SubscriptionsPage() {
 
     branches.forEach((b) => {
       const plan = b.subscription?.plan || "TRIAL";
-      const amount = Number(b.subscription?.billingAmount || b.subscription?.monthlyFee || 0);
+      const amount = Number(b.subscription?.billingAmount || b.subscription?.billingAmount || 0);
 
       if (b.status === "ACTIVE" && plan !== "TRIAL") {
         mrr += amount;
@@ -281,7 +281,7 @@ export default function SubscriptionsPage() {
                 filteredBranches.map((branch) => {
                   const sub = branch.subscription;
                   const plan = sub?.plan || "TRIAL";
-                  const billingAmt = Number(sub?.billingAmount || sub?.monthlyFee || 8000);
+                  const billingAmt = Number(sub?.billingAmount || sub?.billingAmount || 8000);
                   const periodEnd = sub?.currentPeriodEnd
                     ? new Date(sub.currentPeriodEnd).toLocaleDateString("en-US", {
                         day: "numeric",

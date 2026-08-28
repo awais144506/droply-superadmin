@@ -39,7 +39,7 @@ export interface BranchDetail {
 
   // Subscription Info
   subscriptionPlan: SubscriptionPlan;
-  monthlyFee: number;
+  billingAmount: number;
   currentPeriodStart: string;
   currentPeriodEnd: string;
   daysRemaining: number;
