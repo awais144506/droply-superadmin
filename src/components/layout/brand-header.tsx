@@ -1,8 +1,6 @@
 "use client";
 
-import { Droplets } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
-import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import {
   SidebarMenu,
   SidebarMenuItem,
@@ -10,45 +8,32 @@ import {
 } from "@/components/ui/sidebar";
 
 export function BrandHeader() {
-  const { user, isLoaded } = useUser();
-
-  const userName =
-    user?.fullName ||
-    user?.firstName ||
-    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
-    "Admin User";
-
-  const rawRole = (user?.publicMetadata?.role as string) || "SUPER_ADMIN";
-  const formattedRole = rawRole
-    .replace(/_/g, " ")
-    .toLowerCase()
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton
           size="lg"
-          className="w-full flex items-center gap-3 hover:bg-transparent cursor-default"
+          className="w-full flex items-center gap-3 hover:bg-transparent cursor-default px-2"
         >
-          {/* Brand Icon */}
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-700 text-white dark:bg-white dark:text-black shadow-xs">
-            <Droplets className="h-5 w-5" />
+          {/* Logo Image */}
+          <div className="relative flex h-9 w-12 shrink-0 items-center justify-center overflow-hidden ">
+            <Image
+              src="/logo.png"
+              alt="Droply Logo"
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
 
-          {/* User & Role Details */}
-          <div className="flex flex-col gap-1 leading-none text-left overflow-hidden">
-            <div className="flex flex-col items-start gap-1">
-              <span className="text-xs font-medium text-muted-foreground truncate max-w-35">
-                {isLoaded ? userName : "Loading..."}
-              </span>
-              <Badge
-                variant="outline"
-                className="h-4 border-blue-600/30 bg-blue-500/10 px-1.5 py-0 text-[9px] font-semibold text-blue-700 dark:text-blue-400 uppercase"
-              >
-                {isLoaded ? formattedRole : "..."}
-              </Badge>
-            </div>
+          {/* Brand Name */}
+          <div className="flex flex-col justify-center leading-none text-left overflow-hidden">
+            <span className="text-lg font-bold tracking-tight text-sky-600 font-sans">
+              Droply
+            </span>
+            <span className="text-[10px] font-medium text-slate-400 tracking-wider mt-0.5">
+              Plant Management
+            </span>
           </div>
         </SidebarMenuButton>
       </SidebarMenuItem>
