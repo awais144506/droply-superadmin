@@ -23,9 +23,9 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
   // Extract metadata safely from sessionClaims
   const metadata = (sessionClaims?.metadata || sessionClaims?.public_metadata || {}) as {
-    platformRole?: string;
+    role?: string;
   };
-  const userRole = metadata.platformRole;
+  const userRole = metadata.role;
   const isAllowedTenantUser =
     Boolean(userRole) &&
     ALLOWED_TENANT_ROLES.includes(userRole!);
