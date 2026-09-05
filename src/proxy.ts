@@ -16,7 +16,7 @@ const isUnauthorizedRoute = createRouteMatcher(["/unauthorized(.*)"]);
 
 
 // Allowed Tenant Roles
-const ALLOWED_TENANT_ROLES = ["SUPER_ADMIN", "SUPPORT_ADMIN", "FINANCE_ADMIN"];
+const ALLOWED_TENANT_ROLES = ["SUPER_ADMIN", "SUPPORT_ADMIN"];
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const { userId, sessionClaims } = await auth();

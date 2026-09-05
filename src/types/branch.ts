@@ -5,13 +5,12 @@ export type IndustryVertical =
   | "DAIRY"
   | "COMMERCIAL_DISTRIBUTION";
 
-export type BranchStatus = "ACTIVE" | "PAST_DUE" | "SUSPENDED" | "ARCHIVED";
-export type SubscriptionPlan = "TRIAL" | "MONTHLY" | "YEARLY";
-
+export type BranchStatus = "ACTIVE" | "PAST_DUE" | "SUSPENDED";
+export type SubscriptionCycle = "TRIAL" | "MONTHLY" | "YEARLY";
+export type SubscriptionTier = "TRIAL" | "MONTHLY" | "YEARLY";
 export type BranchUserRole = "OWNER" | "MANAGER" | "RIDER";
 export type PaymentMethod = "BANK_TRANSFER" | "JAZZCASH" | "EASYPAISA" | "CASH";
 export type InvoiceStatus = "PAID" | "PENDING" | "OVERDUE";
-
 // --- Sub-Entities ---
 export interface BranchUser {
   id: string;
@@ -36,7 +35,7 @@ export interface PaymentInvoice {
 
 export interface BranchSubscription {
   id: string;
-  plan: SubscriptionPlan;
+  plan: SubscriptionCycle;
   monthlyFee: number | string; // For backend entity compatibility
   billingAmount?: number;      // For UI billing calculations
   currentPeriodStart: string;
@@ -59,40 +58,41 @@ export interface CreateBranchInput {
   ownerEmail: string;
   ownerPhone: string;
   maxUsersLimit?: number;
-  subscriptionPlan?: SubscriptionPlan;
+  subscriptionPlan?: SubscriptionCycle;
   billingAmount?: number;
 }
 
 // --- Base Backend Branch Entity (Used in List Views & Queries) ---
 export interface BranchEntity {
   id: string;
-  slug: string;
-  name: string;
-  industry: IndustryVertical;
   status: BranchStatus;
+  branchCode: string;
+  name: string;
   address: string;
-  city: string;
-  latitude: string | number;
-  longitude: string | number;
-  phone: string;
-  email: string;
-  ownerName: string;
-  ownerEmail: string;
-  ownerPhone: string;
+  latitude: number;
+  longitude: number;
   maxUsersLimit: number;
-  createdAt: string;
-  subscription?: BranchSubscription;
-  invoices?: PaymentInvoice[];
-  _count?: {
-    invoices: number;
-    users?: number;
-  };
+  phone:string;
+  email:string;
+  owner: {
+    phone: string;
+    name: string;
+    email: string;
+    cnic:string;
+  }
+  subscription: {
+    tier: SubscriptionTier
+    cycle: SubscriptionCycle
+    renewDate: Date
+  }
+  createdAt:Date
+  updatedAt:Date
 }
 
 // --- Extended Branch Detail (Used in Single Branch Overview / Dashboard) ---
 export interface BranchDetail extends BranchEntity {
   // Direct UI accessors (fallback if flat structure is accessed)
-  subscriptionPlan?: SubscriptionPlan;
+  subscriptionPlan?: SubscriptionCycle;
   billingAmount?: number;
   currentPeriodStart?: string;
   currentPeriodEnd?: string;

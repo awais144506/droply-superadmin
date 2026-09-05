@@ -1,45 +1,99 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { BranchEntity, CreateBranchInput } from "@/types/branch";
 
+export interface GetBranchesParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: "ACTIVE" | "PAST_DUE" | "SUSPENDED";
+  tier?: "SILVER" | "GOLD" | "PLATINUM";
+}
+
+export interface PaginatedBranches {
+  data: BranchEntity[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+export interface UpdateOwnerInput {
+  branchId: string;
+  data: {
+    ownerName: string;
+    ownerEmail: string;
+    ownerPhone: string;
+    ownerCnic: string;
+  };
+}
+
+export interface UpdateBranchInput {
+  branchId: string;
+  data: {
+    name: string;
+    phone: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+  };
+}
+
 export const branchKeys = {
   all: ["branches"] as const,
-  lists: () => [...branchKeys.all, "list"] as const,
+  lists: (filters?: GetBranchesParams) => [...branchKeys.all, "list", filters] as const,
   detail: (id: string) => [...branchKeys.all, "detail", id] as const,
+  stats: () => [...branchKeys.all, "stats"] as const,
 };
 
-// GET /branches
-async function getBranches(): Promise<BranchEntity[]> {
-  const data: any = await apiClient.get("/branches");
-  return Array.isArray(data) ? data : data?.branches || data?.data || [];
+async function getBranches(params?: GetBranchesParams): Promise<PaginatedBranches> {
+  const response: any = await apiClient.get("/branches", { params });
+  return response;
 }
 
-// GET /branches/:id
 async function getBranchById(id: string): Promise<BranchEntity> {
-  const data: any = await apiClient.get(`/branches/${id}`);
-  return data?.branch || data;
+  const response: any = await apiClient.get(`/branches/${id}`);
+  return response?.data || response;
 }
 
-// POST /branches
 async function createBranch(dto: CreateBranchInput): Promise<any> {
   return apiClient.post("/branches", {
     ...dto,
-    latitude: Number(dto.latitude),
-    longitude: Number(dto.longitude),
-    maxUsersLimit: Number(dto.maxUsersLimit),
+    latitude: dto.latitude ? Number(dto.latitude) : undefined,
+    longitude: dto.longitude ? Number(dto.longitude) : undefined,
   });
 }
 
-// Hook: Fetch all branches
-export function useBranches() {
+async function getBranchStats() {
+  const response: any = await apiClient.get("/branches/stats");
+  return response?.data || response;
+}
+
+async function updateBranchStatus({ id, status }: { id: string; status: "ACTIVE" | "SUSPENDED" }): Promise<any> {
+  return apiClient.patch(`/branches/${id}/status`, { status });
+}
+
+async function updateBranchOwner({ branchId, data }: UpdateOwnerInput): Promise<any> {
+  return apiClient.patch(`/branches/${branchId}/owner`, data);
+}
+
+async function updateBranchDetails({ branchId, data }: UpdateBranchInput): Promise<any> {
+  return apiClient.patch(`/branches/${branchId}`, data);
+}
+
+export function useBranches(filters?: GetBranchesParams) {
   return useQuery({
-    queryKey: branchKeys.lists(),
-    queryFn: getBranches,
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    queryKey: branchKeys.lists(filters),
+    queryFn: () => getBranches(filters),
+    placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 2,
   });
 }
 
-// Hook: Fetch single branch by ID
 export function useBranch(branchId: string) {
   return useQuery({
     queryKey: branchKeys.detail(branchId),
@@ -49,37 +103,62 @@ export function useBranch(branchId: string) {
   });
 }
 
-// Hook: Provision new branch
+export function useBranchStats() {
+  return useQuery({
+    queryKey: branchKeys.stats(),
+    queryFn: getBranchStats,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
 export function useCreateBranch() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createBranch,
-    onSuccess: (data) => {
-      // Invalidate the list cache to trigger an immediate background refresh
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: branchKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: branchKeys.stats() });
 
-      // If created branch ID is returned, pre-populate or invalidate its detail query
-      const newId = data?.branch?.id || data?.id;
+      const newId = response?.data?.id || response?.id;
       if (newId) {
         queryClient.invalidateQueries({ queryKey: branchKeys.detail(newId) });
       }
     },
   });
-
-
 }
-// Hook: Update Branch Details Mutation
-export function useUpdateBranch() {
+
+export function useUpdateBranchStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<CreateBranchInput> }) => {
-      return apiClient.patch(`/branches/${id}`, data);
-    },
+    mutationFn: updateBranchStatus,
     onSuccess: (_, variables) => {
-      // Refresh single branch detail and branches list cache
       queryClient.invalidateQueries({ queryKey: branchKeys.detail(variables.id) });
+      queryClient.invalidateQueries({ queryKey: branchKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: branchKeys.stats() });
+    },
+  });
+}
+
+export function useUpdateBranchDetails() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateBranchDetails,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: branchKeys.detail(variables.branchId) });
+      queryClient.invalidateQueries({ queryKey: branchKeys.lists() });
+    },
+  });
+}
+export function useUpdateBranchOwner() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateBranchOwner,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: branchKeys.detail(variables.branchId) });
       queryClient.invalidateQueries({ queryKey: branchKeys.lists() });
     },
   });
