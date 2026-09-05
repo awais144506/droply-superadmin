@@ -26,7 +26,7 @@ export default function PaymentClearancePage() {
   }
 
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto p-6">
+    <div className="space-y-6 max-w-350 mx-auto p-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">Payment Clearance</h1>
         <p className="text-sm text-slate-500 mt-1">

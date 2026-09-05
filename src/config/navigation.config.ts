@@ -7,6 +7,7 @@ import {
   Users,
   Settings,
   Layers,
+  Banknote,
   LucideIcon,
   FileText,
 } from "lucide-react";
@@ -60,12 +61,6 @@ export const BRANCH_NAV_CONFIG: NavGroup[] = [
         icon: FileCheck,
         allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
       },
-      {
-        title: "Billing & Invoices",
-        url: "/manage/invoices",
-        icon: FileText,
-        allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
-      },
       // {
       //   title: "Revenue Reports",
       //   url: "/manage/reports",
@@ -93,6 +88,13 @@ export const BRANCH_NAV_CONFIG: NavGroup[] = [
         title: "Team & Admins", // Renamed for clarity
         url: "/platform/team",
         icon: Users,
+        badge: "Admin",
+        allowedRoles: ["SUPER_ADMIN"],
+      },
+           {
+        title: "Bank Details", // Renamed for clarity
+        url: "/platform/bank",
+        icon: Banknote,
         badge: "Admin",
         allowedRoles: ["SUPER_ADMIN"],
       },

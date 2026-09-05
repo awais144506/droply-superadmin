@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useSuperDashboard } from "@/features/dashboard/api/use-super-dashboard";
 import { GlobalStats } from "@/features/dashboard/components/global-stats";
 import { RecentLeadsTable } from "@/features/dashboard/components/recent-leads-table";
-import { SystemLogs } from "@/features/dashboard/components/system-logs";
+import { PlatformLogs } from "@/features/dashboard/components/platform-logs";
 
 export default function SuperAdminDashboard() {
   const { data, isLoading } = useSuperDashboard();
@@ -34,7 +34,7 @@ export default function SuperAdminDashboard() {
           <RecentLeadsTable leads={data.recentLeads} />
         </div>
         <div className="lg:col-span-1">
-          <SystemLogs logs={data.systemLogs} />
+          <PlatformLogs />
         </div>
       </div>
     </div>

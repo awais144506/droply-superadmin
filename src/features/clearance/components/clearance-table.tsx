@@ -2,17 +2,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, CheckCircle2, Ban, Clock, Receipt } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Search, CheckCircle2, Ban, Clock } from "lucide-react";
 import { ClearanceEntity, ClearanceStatus } from "@/types/clearance";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 
 export function ClearanceTable({ clearances }: { clearances: ClearanceEntity[] }) {
+  const router = useRouter();
   const [localClearances, setLocalClearances] = useState<ClearanceEntity[]>([]);
+  
   useEffect(() => { setLocalClearances(clearances); }, [clearances]);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | ClearanceStatus>("PENDING"); // Default to pending action
+  const [statusFilter, setStatusFilter] = useState<"ALL" | ClearanceStatus>("PENDING");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
@@ -32,11 +34,6 @@ export function ClearanceTable({ clearances }: { clearances: ClearanceEntity[] }
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginated = filtered.slice(startIndex, startIndex + itemsPerPage);
-
-  const handleAction = (id: string, status: ClearanceStatus) => {
-    setLocalClearances(prev => prev.map(c => c.id === id ? { ...c, status } : c));
-    toast.success(`Payment marked as ${status}`);
-  };
 
   const getStatusBadge = (status: ClearanceStatus) => {
     switch(status) {
@@ -83,12 +80,16 @@ export function ClearanceTable({ clearances }: { clearances: ClearanceEntity[] }
           </thead>
           <tbody className="divide-y divide-slate-100">
             {paginated.map((c) => (
-              <tr key={c.id} className="hover:bg-slate-50/50 transition-colors">
+              <tr 
+                key={c.id} 
+                onClick={() => router.push(`/manage/clearances/${c.id}`)}
+                className="hover:bg-slate-50/50 transition-colors cursor-pointer group"
+              >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">{c.branchCode}</span>
                   </div>
-                  <p className="font-bold text-slate-900">{c.branchName}</p>
+                  <p className="font-bold text-slate-900 group-hover:text-primary transition-colors">{c.branchName}</p>
                 </td>
                 <td className="px-6 py-4">
                   <p className="font-bold text-slate-800">Rs {c.amount.toLocaleString()}</p>

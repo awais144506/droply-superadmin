@@ -2,21 +2,21 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Settings2, Ban, CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowLeft, Settings2, Ban, CheckCircle2, Loader2, CreditCard, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { BranchEntity } from "@/types/branch";
 import { useUpdateBranchStatus } from "@/features/branches/api/use-branches";
 import { toast } from "sonner";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
 interface TopNavigationBranchProps {
@@ -79,13 +79,29 @@ export default function TopNavigationBranch({ branch }: TopNavigationBranchProps
             </div>
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center flex-wrap gap-2">
                 <Link
-                    href={`/app/subscriptions/${branch.id}`}
+                    href={`/manage/clearances/${branch.id}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                >
+                    <CreditCard className="h-3.5 w-3.5 mr-1 text-primary" />
+                    Payments
+                </Link>
+
+                <Link
+                    href={`/manage/invoices/${branch.id}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                >
+                    <FileText className="h-3.5 w-3.5 mr-1 text-primary" />
+                    Invoices
+                </Link>
+
+                <Link
+                    href={`/manage/subscriptions/${branch.id}`}
                     className={buttonVariants({ variant: "outline", size: "sm" })}
                 >
                     <Settings2 className="h-3.5 w-3.5 mr-1" />
-                    Subscription Settings
+                    Subscription
                 </Link>
 
                 <Button
@@ -96,11 +112,11 @@ export default function TopNavigationBranch({ branch }: TopNavigationBranchProps
                 >
                     {isSuspended ? (
                         <>
-                            <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Activate Branch
+                            <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Activate
                         </>
                     ) : (
                         <>
-                            <Ban className="h-3.5 w-3.5 mr-1" /> Suspend Branch
+                            <Ban className="h-3.5 w-3.5 mr-1" /> Suspend
                         </>
                     )}
                 </Button>

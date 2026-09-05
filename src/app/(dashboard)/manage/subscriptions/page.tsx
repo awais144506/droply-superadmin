@@ -1,32 +1,44 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
-import { useSubscriptions } from "@/features/subscriptions/api/use-subscriptions";
+import { useState } from "react";
+import { useBranchStats, useBranches } from "@/features/branches/api/use-branches";
 import { SubscriptionStats } from "@/features/subscriptions/components/subscription-stats";
 import { SubscriptionTable } from "@/features/subscriptions/components/subscription-table";
+import { BranchStatus } from "@/types/branch";
+import { useRouter } from "next/navigation";
 
 export default function SubscriptionsPage() {
-  const { data: subscriptions = [], isLoading, isError } = useSubscriptions();
+  const router = useRouter();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-400">
-        <Loader2 className="h-8 w-8 animate-spin mb-4 text-sky-600" />
-        <p className="text-sm font-medium">Loading subscription data...</p>
-      </div>
-    );
-  }
+  // Fetch stats for the top cards
+  const { data: statsData, isLoading: isStatsLoading } = useBranchStats();
 
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-rose-400">
-        <p className="text-sm font-bold">Failed to load subscriptions. Please check API connection.</p>
-      </div>
-    );
-  }
+  const { data, isLoading, isError, error } = useBranches({
+    page,
+    limit: 20,
+    search: search || undefined,
+    status: statusFilter === "ALL" ? undefined : (statusFilter as BranchStatus),
+  });
+
+  const branches = data?.data || [];
+  const meta = data?.meta || { total: 0, page: 1, limit: 20, totalPages: 1 };
+
+  const handleSearchChange = (query: string) => {
+    setSearch(query);
+    setPage(1);
+  };
+
+  const handleStatusChange = (status: string) => {
+    setStatusFilter(status);
+    setPage(1);
+  };
+
 
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto p-6">
+    <div className="space-y-6 max-w-350 mx-auto p-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">Active Subscriptions</h1>
         <p className="text-sm text-slate-500 mt-1">
@@ -34,8 +46,23 @@ export default function SubscriptionsPage() {
         </p>
       </div>
 
-      <SubscriptionStats subscriptions={subscriptions} />
-      <SubscriptionTable subscriptions={subscriptions} />
+      <SubscriptionStats stats={statsData} isLoading={isStatsLoading} />
+
+      {/* Pass the branch data array to your table, along with pagination states if needed */}
+      <SubscriptionTable
+        branches={branches}
+        totalCount={meta.total}
+        currentPage={meta.page}
+        totalPages={meta.totalPages}
+        onPageChange={setPage}
+        searchQuery={search}
+        onSearchChange={handleSearchChange}
+        statusFilter={statusFilter}
+        onStatusChange={handleStatusChange}
+        isLoading={isLoading}
+        isError={isError}
+        error={error?.message}
+      />
     </div>
   );
 }

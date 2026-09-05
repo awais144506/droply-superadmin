@@ -1,369 +1,277 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  CreditCard,
-  Calendar,
-  Clock,
-  Receipt,
-  ShieldCheck,
-  AlertCircle,
+import { 
+  ArrowLeft, 
+  CreditCard, 
+  Calendar, 
+  Users, 
+  Crown, 
+  Sparkles, 
+  Zap, 
+  CheckCircle2, 
+  AlertTriangle,
+  History,
   Download,
-  Building2,
-  User,
-  Sparkles,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { useBranch } from "@/features/branches/api/use-branches";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
-export default function SubscriptionDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const branchId = params.branchId as string;
+// --- DUMMY DATA ---
+const DUMMY_BRANCH = {
+  id: "br_987654321",
+  name: "Downtown Central Hub",
+  status: "ACTIVE",
+  subscription: {
+    tier: "SILVER",
+    cycle: "MONTHLY",
+    renewDate: "2026-10-05T00:00:00.000Z",
+    price: 49.99,
+  },
+  seatsUsed: 12,
+  maxSeats: 15,
+};
 
-  const { data: branch, isLoading, isError, error } = useBranch(branchId);
+const DUMMY_INVOICES = [
+  { id: "INV-2026-09", date: "Sep 05, 2026", amount: 49.99, status: "Paid" },
+  { id: "INV-2026-08", date: "Aug 05, 2026", amount: 49.99, status: "Paid" },
+  { id: "INV-2026-07", date: "Jul 05, 2026", amount: 49.99, status: "Paid" },
+];
+// ------------------
 
-  if (isLoading) {
-    return (
-      <div className="flex h-96 w-full items-center justify-center">
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          <p className="text-xs text-muted-foreground">Loading subscription lifecycle...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || !branch) {
-    return (
-      <div className="p-8">
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-6 text-center">
-          <AlertCircle className="mx-auto h-8 w-8 text-destructive mb-2" />
-          <h2 className="text-base font-semibold text-destructive">
-            Subscription Record Unavailable
-          </h2>
-          <p className="text-xs text-muted-foreground mt-1">
-            {error?.message || "Could not resolve billing parameters for this plant."}
-          </p>
-          <div className="mt-4">
-            <Link
-              href="/subscriptions"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
-              Back to Subscriptions
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const sub = branch.subscription;
-  const plan = sub?.plan || "TRIAL";
-  const billingAmount = Number(sub?.billingAmount || sub?.billingAmount || 8000);
-  const invoices = (branch as any).invoices ?? [];
-
-  // Calculate cycle period days & progress
-  const startDate = sub?.currentPeriodStart ? new Date(sub.currentPeriodStart) : new Date(branch.createdAt);
-  const endDate = sub?.currentPeriodEnd ? new Date(sub.currentPeriodEnd) : new Date();
-  const now = new Date();
-  const totalCycleDays = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
-  const daysRemaining = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-  const progressPercent = Math.min(100, Math.max(0, Math.round(((totalCycleDays - daysRemaining) / totalCycleDays) * 100)));
+export default function SubscriptionDetailsPage() {
+  const [billingCycle, setBillingCycle] = useState<"MONTHLY" | "YEARLY">("MONTHLY");
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Top Breadcrumb & Quick Actions */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
+    <div className="space-y-8 max-w-[1200px] mx-auto p-6">
+      {/* 1. Page Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
         <div className="flex items-center gap-3">
           <Link
-            href="/subscriptions"
-            className={buttonVariants({ variant: "outline", size: "icon-sm" })}
-            title="Back to Subscriptions"
+            href="/app/subscriptions"
+            className={buttonVariants({ variant: "outline", size: "icon" })}
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-xl font-bold tracking-tight text-foreground">
-                {branch.name}
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                {DUMMY_BRANCH.name}
               </h1>
-              <Badge
-                variant={
-                  plan === "YEARLY"
-                    ? "default"
-                    : plan === "MONTHLY"
-                      ? "secondary"
-                      : "outline"
-                }
-                className="font-mono text-[10px] uppercase"
-              >
-                {plan} TIER
-              </Badge>
-              <Badge
-                variant={
-                  branch.status === "ACTIVE"
-                    ? "default"
-                    : branch.status === "PAST_DUE"
-                      ? "secondary"
-                      : "destructive"
-                }
-                className="text-[11px]"
-              >
-                {branch.status}
+              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50 pointer-events-none">
+                {DUMMY_BRANCH.status}
               </Badge>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Subscription ID: <span className="font-mono">{sub?.id || "N/A"}</span> • Plant Slug: <span className="font-mono">{branch.slug}</span>
-            </p>
+            <p className="text-sm text-slate-500 mt-1">Manage subscription, billing cycle, and limits.</p>
           </div>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push(`/branches/${branch.id}`)}
-          >
-            <Building2 className="h-3.5 w-3.5 mr-1" />
-            Inspect Plant
-          </Button>
-          <Button variant="create" size="sm">
-            <Sparkles className="h-3.5 w-3.5 mr-1" />
-            Modify Plan
+        <div className="flex gap-2">
+          <Button variant="outline" className="bg-white">
+            <AlertTriangle className="h-4 w-4 mr-2 text-rose-500" /> Cancel Subscription
           </Button>
         </div>
       </div>
 
-      {/* 4 Financial Stat Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="shadow-xs">
-          <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-medium">Contracted Rate</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-emerald-600 flex items-center justify-between">
-              <span>{plan === "TRIAL" ? "FREE TRIAL" : `PKR ${billingAmount.toLocaleString()}`}</span>
-              <CreditCard className="h-4 w-4 text-emerald-600" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-[11px] text-muted-foreground">
-              Billing Interval: <span className="font-semibold text-foreground">{plan === "YEARLY" ? "Annual" : "Monthly"}</span>
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-xs">
-          <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-medium">Cycle Renewal In</CardDescription>
-            <CardTitle className="text-2xl font-bold flex items-center justify-between">
-              <span>{daysRemaining} Days</span>
-              <Clock className="h-4 w-4 text-primary" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-[11px] text-muted-foreground">
-              Due Date: <span className="font-semibold text-foreground">{endDate.toLocaleDateString()}</span>
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-xs">
-          <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-medium">Payment Protocol</CardDescription>
-            <CardTitle className="text-2xl font-bold flex items-center justify-between">
-              <span>{sub?.autoRenew ? "Auto-Debit" : "Manual Invoice"}</span>
-              <ShieldCheck className="h-4 w-4 text-primary" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-[11px] text-muted-foreground">
-              Grace Period: <span className="font-semibold text-foreground">{sub?.gracePeriodDays ?? 3} Days</span>
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-xs">
-          <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-medium">Included Staff Quota</CardDescription>
-            <CardTitle className="text-2xl font-bold flex items-center justify-between">
-              <span>{branch.maxUsersLimit} Seats</span>
-              <User className="h-4 w-4 text-primary" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-[11px] text-muted-foreground">
-              Riders, plant operators & staff
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Cycle Progress Bar Card */}
-      <Card>
-        <CardHeader className="pb-3 border-b">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-primary" />
-                Current Billing Cycle Progress
-              </CardTitle>
-              <CardDescription className="text-xs mt-0.5">
-                Period spanning {startDate.toLocaleDateString()} to {endDate.toLocaleDateString()}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* 2. Current Subscription Overview */}
+        <div className="lg:col-span-1 space-y-6">
+          <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-white shadow-sm overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
+              <Sparkles className="w-24 h-24 text-amber-500" />
+            </div>
+            <CardHeader className="pb-4 relative">
+              <CardDescription className="text-amber-700 font-bold uppercase tracking-wider text-xs">
+                Current Plan
               </CardDescription>
-            </div>
-            <span className="font-mono text-xs font-semibold text-foreground">{progressPercent}% elapsed</span>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
-            <div
-              className={`h-full transition-all duration-500 rounded-full ${progressPercent > 85 ? "bg-amber-500" : "bg-emerald-600"
-                }`}
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-          <div className="flex justify-between items-center text-[11px] text-muted-foreground mt-2">
-            <span>Cycle Start: {startDate.toLocaleDateString()}</span>
-            <span>{daysRemaining} Days remaining until renewal</span>
-            <span>Cycle Renewal: {endDate.toLocaleDateString()}</span>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Main Grid: Billing Details & Invoices History */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* Left Column: Account & Billing Profile (4 Cols) */}
-        <div className="space-y-6 lg:col-span-4">
-          <Card>
-            <CardHeader className="pb-3 border-b">
-              <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-primary" />
-                Billing Entity Info
+              <CardTitle className="text-3xl font-black text-slate-900 mt-1">
+                Gold
+                <span className="text-sm font-medium text-slate-500 ml-2 uppercase bg-white/60 px-2 py-1 rounded-md border border-amber-100">
+                  {DUMMY_BRANCH.subscription.cycle}
+                </span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4 space-y-3.5 text-xs">
-              <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                <span className="text-muted-foreground">Billing Contact</span>
-                <span className="font-semibold text-foreground">{branch.ownerName}</span>
+            <CardContent className="space-y-4 relative">
+              <div className="flex items-center justify-between border-b border-amber-100 pb-4">
+                <div className="flex items-center gap-2 text-slate-600">
+                  <CreditCard className="h-4 w-4 text-amber-600" />
+                  <span className="text-sm font-medium">Pricing</span>
+                </div>
+                <span className="font-bold text-slate-900">${DUMMY_BRANCH.subscription.price}<span className="text-xs text-slate-500 font-normal">/mo</span></span>
               </div>
-              <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                <span className="text-muted-foreground">Invoice Email</span>
-                <span className="font-mono text-foreground">{branch.ownerEmail}</span>
+              
+              <div className="flex items-center justify-between border-b border-amber-100 pb-4">
+                <div className="flex items-center gap-2 text-slate-600">
+                  <Calendar className="h-4 w-4 text-amber-600" />
+                  <span className="text-sm font-medium">Next Billing</span>
+                </div>
+                <div className="text-right">
+                  <span className="font-bold text-slate-900 block">
+                    {new Date(DUMMY_BRANCH.subscription.renewDate).toLocaleDateString()}
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded">30 Days Left</span>
+                </div>
               </div>
-              <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                <span className="text-muted-foreground">WhatsApp Alerts</span>
-                <span className="font-mono text-foreground">{branch.ownerPhone}</span>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-slate-600">
+                  <Users className="h-4 w-4 text-amber-600" />
+                  <span className="text-sm font-medium">Staff Seats</span>
+                </div>
+                <span className="font-bold text-slate-900">{DUMMY_BRANCH.seatsUsed} <span className="text-slate-400 font-normal">/ {DUMMY_BRANCH.maxSeats}</span></span>
               </div>
-              <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                <span className="text-muted-foreground">Billing City</span>
-                <span className="font-semibold text-foreground">{branch.city}</span>
+            </CardContent>
+          </Card>
+
+          {/* Quick Invoice History */}
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                <History className="h-4 w-4 text-primary" />
+                Recent Payments
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {DUMMY_INVOICES.map((inv) => (
+                  <div key={inv.id} className="flex justify-between items-center text-sm border-b border-dashed border-slate-100 last:border-0 pb-3 last:pb-0">
+                    <div>
+                      <p className="font-medium text-slate-900">{inv.date}</p>
+                      <p className="text-[11px] text-slate-500 font-mono">{inv.id}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-bold text-slate-900">${inv.amount}</span>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 text-slate-400 hover:text-primary">
+                        <Download className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="flex flex-col gap-1 pt-1">
-                <span className="text-muted-foreground">Physical Facility Address</span>
-                <span className="font-medium text-foreground bg-muted/40 p-2 rounded border">
-                  {branch.address}
-                </span>
-              </div>
+              <Button variant="link" className="w-full mt-2 text-xs text-primary h-auto p-0">View all invoices &rarr;</Button>
             </CardContent>
           </Card>
         </div>
 
-        {/* Right Column: Invoice History Ledger (8 Cols) */}
-        <div className="lg:col-span-8 flex flex-col">
-          <Card className="flex-1 flex flex-col">
-            <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                  <Receipt className="h-4 w-4 text-primary" />
-                  Generated Invoices & Ledger Records
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Official tax receipts and recurring payment lifecycle history.
-                </CardDescription>
+        {/* 3. Change Plan Section */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="shadow-sm border-slate-200">
+            <CardHeader className="border-b border-slate-100 pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-lg">Change Subscription Plan</CardTitle>
+                  <CardDescription>Upgrade or downgrade the current tier for this branch.</CardDescription>
+                </div>
+                
+                {/* Billing Cycle Toggle */}
+                <div className="flex items-center bg-slate-100 p-1 rounded-lg w-max">
+                  <button
+                    onClick={() => setBillingCycle("MONTHLY")}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${billingCycle === "MONTHLY" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    Monthly
+                  </button>
+                  <button
+                    onClick={() => setBillingCycle("YEARLY")}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${billingCycle === "YEARLY" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    Yearly <span className="text-[9px] text-emerald-600 bg-emerald-100 px-1 rounded ml-1">-20%</span>
+                  </button>
+                </div>
               </div>
-              <Button variant="outline" size="sm">
-                <Receipt className="h-3.5 w-3.5 mr-1" />
-                Issue Manual Invoice
-              </Button>
             </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                {/* SILVER PLAN */}
+                <div className="border border-slate-200 rounded-xl p-5 flex flex-col relative transition-all hover:border-slate-300">
+                  <div className="mb-4">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold bg-slate-100 text-slate-600 uppercase tracking-wider mb-2">
+                      <Zap className="h-3 w-3" /> Silver
+                    </span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-black text-slate-900">{billingCycle === "MONTHLY" ? "$29" : "$279"}</span>
+                      <span className="text-xs text-slate-500 font-medium">/{billingCycle === "MONTHLY" ? "mo" : "yr"}</span>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 mb-6 flex-1">
+                    <li className="text-xs text-slate-600 flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Up to 5 Staff Seats</li>
+                    <li className="text-xs text-slate-600 flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Basic Reporting</li>
+                  </ul>
+                  <Button variant="outline" className="w-full text-xs cursor-pointer">
+                    Downgrade to Silver
+                  </Button>
+                </div>
 
-            <CardContent className="p-0 flex-1">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead className="pl-6">Invoice Number</TableHead>
-                    <TableHead>Billing Period</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Due Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="pr-6 text-right">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {invoices.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="h-40 text-center text-xs text-muted-foreground">
-                        No invoices generated for this subscription cycle yet.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    invoices.map((inv: any) => (
-                      <TableRow key={inv.id}>
-                        <TableCell className="pl-6 font-mono text-xs font-medium text-foreground">
-                          {inv.invoiceNumber}
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          {inv.billingPeriod || "Standard Cycle"}
-                        </TableCell>
-                        <TableCell className="font-mono text-xs font-semibold text-foreground">
-                          PKR {Number(inv.amount).toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          {inv.dueDate ? new Date(inv.dueDate).toLocaleDateString() : "N/A"}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              inv.status === "PAID"
-                                ? "default"
-                                : inv.status === "PENDING"
-                                  ? "secondary"
-                                  : "destructive"
-                            }
-                            className="text-[10px]"
-                          >
-                            {inv.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="pr-6 text-right">
-                          <Button variant="ghost" size="icon-sm" title="Download Receipt">
-                            <Download className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                {/* GOLD PLAN (Active) */}
+                <div className="border-2 border-amber-400 bg-amber-50/30 rounded-xl p-5 flex flex-col relative shadow-sm">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-950 text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                    Current Plan
+                  </div>
+                  <div className="mb-4 mt-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold bg-amber-100 text-amber-700 uppercase tracking-wider mb-2">
+                      <Sparkles className="h-3 w-3" /> Gold
+                    </span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-black text-slate-900">{billingCycle === "MONTHLY" ? "$49" : "$470"}</span>
+                      <span className="text-xs text-slate-500 font-medium">/{billingCycle === "MONTHLY" ? "mo" : "yr"}</span>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 mb-6 flex-1">
+                    <li className="text-xs text-slate-600 flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Up to 15 Staff Seats</li>
+                    <li className="text-xs text-slate-600 flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Advanced Analytics</li>
+                  </ul>
+                  <Button disabled className="w-full text-xs bg-slate-900 text-white opacity-50 cursor-not-allowed">
+                    Currently Active
+                  </Button>
+                </div>
+
+                {/* PLATINUM PLAN */}
+                <div className="border border-slate-200 rounded-xl p-5 flex flex-col relative transition-all hover:border-indigo-200 hover:shadow-md">
+                  <div className="mb-4">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold bg-indigo-50 text-indigo-700 uppercase tracking-wider mb-2">
+                      <Crown className="h-3 w-3" /> Platinum
+                    </span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-black text-slate-900">{billingCycle === "MONTHLY" ? "$99" : "$950"}</span>
+                      <span className="text-xs text-slate-500 font-medium">/{billingCycle === "MONTHLY" ? "mo" : "yr"}</span>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 mb-6 flex-1">
+                    <li className="text-xs text-slate-600 flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Unlimited Staff Seats</li>
+                    <li className="text-xs text-slate-600 flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Custom Integrations</li>
+                  </ul>
+                  <Button className="w-full text-xs bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer shadow-sm">
+                    Upgrade to Platinum
+                  </Button>
+                </div>
+
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Seat Management / Overages (Optional but good for SaaS) */}
+          <Card className="shadow-sm border-slate-200">
+            <CardHeader className="border-b border-slate-100 pb-4">
+              <CardTitle className="text-base">Seat Utilization</CardTitle>
+              <CardDescription className="text-xs">Monitor user limits and purchase extra seats.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-slate-700">12 of 15 seats used</span>
+                <span className="text-sm font-bold text-amber-600">80%</span>
+              </div>
+              <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-6">
+                <div className="bg-amber-500 h-full rounded-full" style={{ width: '80%' }}></div>
+              </div>
+              <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+                <p className="text-xs text-slate-500 max-w-md">Need more users but don&apos;t want to upgrade to Platinum? You can purchase add-on seat packs.</p>
+                <Button variant="outline" size="sm" className="text-xs cursor-pointer">
+                  Buy Extra Seats
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
