@@ -31,7 +31,7 @@ export interface BranchDetail {
   address: string;
   industry: IndustryType;
   status: BranchStatus;
-  
+
   // Owner Details
   ownerName: string;
   ownerPhone: string;
@@ -48,7 +48,7 @@ export interface BranchDetail {
   // Nested Collections
   users: BranchUser[];
   invoices: PaymentInvoice[];
-  
+
   // High-level operational stats
   metrics: {
     totalCustomers: number;

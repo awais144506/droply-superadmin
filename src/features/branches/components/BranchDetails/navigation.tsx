@@ -17,7 +17,7 @@ export default function TopNavigationBranch({ branch }: TopNavigationBranchProps
             {/* Left: Back Button & Branch Info */}
             <div className="flex items-center gap-3">
                 <Link
-                    href="/branches"
+                    href="/manage/branches"
                     className={buttonVariants({ variant: "outline", size: "icon-sm" })}
                     title="Back to Registry"
                 >

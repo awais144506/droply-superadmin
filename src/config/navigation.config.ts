@@ -7,7 +7,6 @@ import {
   Users,
   Settings,
   Layers,
-  Activity,
   LucideIcon,
   FileText,
 } from "lucide-react";
@@ -35,7 +34,7 @@ export interface NavGroup {
 
 export const BRANCH_NAV_CONFIG: NavGroup[] = [
   {
-    label: "BRANCH MANAGEMENT",
+    label: "TENANTS & SALES",
     headerColor: {
       text: "text-sky-600 dark:text-sky-400",
       dot: "bg-sky-500",
@@ -50,7 +49,7 @@ export const BRANCH_NAV_CONFIG: NavGroup[] = [
         allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
       },
       {
-        title: "Subscriptions",
+        title: "Active Subscriptions",
         url: "/manage/subscriptions",
         icon: CreditCard,
         allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
@@ -62,17 +61,17 @@ export const BRANCH_NAV_CONFIG: NavGroup[] = [
         allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
       },
       {
-        title: "Invoices & Receipts",
+        title: "Billing & Invoices",
         url: "/manage/invoices",
         icon: FileText,
         allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
       },
-      {
-        title: "Revenue Reports",
-        url: "/manage/reports",
-        icon: BarChart3,
-        allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
-      },
+      // {
+      //   title: "Revenue Reports",
+      //   url: "/manage/reports",
+      //   icon: BarChart3,
+      //   allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
+      // },
       {
         title: "Support Tickets",
         url: "/manage/tickets",
@@ -91,32 +90,27 @@ export const BRANCH_NAV_CONFIG: NavGroup[] = [
     },
     items: [
       {
-        title: "Platform Users",
-        url: "/platform/users",
+        title: "Team & Admins", // Renamed for clarity
+        url: "/platform/team",
         icon: Users,
         badge: "Admin",
         allowedRoles: ["SUPER_ADMIN"],
       },
-      {
-        title: "Manage Subscriptions",
-        url: "/platform/plans",
-        icon: Layers,
-        badge: "Admin",
-        allowedRoles: ["SUPER_ADMIN"],
-      },
-      {
-        title: "Global Settings",
-        url: "/platform/settings",
-        icon: Settings,
-        badge: "Admin",
-        allowedRoles: ["SUPER_ADMIN"],
-      },
-      {
-        title: "Activity Logs & Audit",
-        url: "/platform/logs",
-        icon: Activity,
-        allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
-      },
+      // {
+      //   title: "Pricing Plans", // Renamed to avoid confusion with active tenant subscriptions
+      //   url: "/platform/plans",
+      //   icon: Layers,
+      //   badge: "Admin",
+      //   allowedRoles: ["SUPER_ADMIN"],
+      // },
+      // {
+      //   title: "Global Settings",
+      //   url: "/platform/settings",
+      //   icon: Settings,
+      //   badge: "Admin",
+      //   allowedRoles: ["SUPER_ADMIN"],
+      // },
+      // Activity Logs & Audit removed - will be handled via dashboard widgets
     ],
   },
 ];

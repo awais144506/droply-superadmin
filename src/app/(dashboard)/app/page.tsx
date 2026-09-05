@@ -1,32 +1,40 @@
+"use client";
 
-import { OverviewStats } from "@/features/dashboard/components/overview-stats";
-import { RecentBranchesCard } from "@/features/dashboard/components/recent-branches-card";
-import { ActivityFeedCard } from "@/features/dashboard/components/activity-feed-card";
+import { Loader2 } from "lucide-react";
+import { useSuperDashboard } from "@/features/dashboard/api/use-super-dashboard";
+import { GlobalStats } from "@/features/dashboard/components/global-stats";
+import { RecentLeadsTable } from "@/features/dashboard/components/recent-leads-table";
+import { SystemLogs } from "@/features/dashboard/components/system-logs";
 
-export default function SuperAdminDashboardPage() {
+export default function SuperAdminDashboard() {
+  const { data, isLoading } = useSuperDashboard();
+
+  if (isLoading || !data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-400">
+        <Loader2 className="h-8 w-8 animate-spin mb-4 text-sky-600" />
+        <p className="text-sm font-medium">Loading platform metrics...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col gap-6">
-      {/* Top Banner & Quick Action */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight">SuperAdmin Command Center</h1>
-          <p className="text-xs text-muted-foreground">
-            Platform governance, branch quotas, and system health status.
-          </p>
-        </div>
-    
+    <div className="space-y-6 max-w-350 mx-auto p-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Platform Overview</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          Global metrics, incoming tenant leads, and critical system alerts.
+        </p>
       </div>
 
-      {/* 4 Clean Metric Cards */}
-      <OverviewStats />
+      <GlobalStats stats={data.stats} />
 
-      {/* Main Grid: Branches Table (2/3 width) + Live Logs (1/3 width) */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-auto lg:h-100">
         <div className="lg:col-span-2">
-          <RecentBranchesCard />
+          <RecentLeadsTable leads={data.recentLeads} />
         </div>
-        <div>
-          <ActivityFeedCard />
+        <div className="lg:col-span-1">
+          <SystemLogs logs={data.systemLogs} />
         </div>
       </div>
     </div>
