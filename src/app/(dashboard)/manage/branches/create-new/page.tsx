@@ -57,7 +57,7 @@ export default function CreateBranchPage() {
   const onSubmit = (data: CreateBranchFormData) => {
     createBranch(data as any, {
       onSuccess: () => {
-        toast.success("Branch provisioned with 7-Day Gold Trial!");
+        toast.success("Branch created with 7-Day Gold Trial!");
         router.push("/manage/branches");
       },
       onError: (err: any) => {
