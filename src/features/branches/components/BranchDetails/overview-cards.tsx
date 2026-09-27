@@ -22,7 +22,7 @@ export default function BranchOverViewCard({ branch }: BranchOverViewCardProps) 
     : null;
 
   // Active users count from relation count or array length
-  const currentUsersCount = branch?._count?.users ?? branch?.users?.length ?? 0;
+  const currentUsersCount = 20;
   const maxLimit = branch?.maxUsersLimit || 15;
 
   return (

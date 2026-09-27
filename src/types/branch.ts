@@ -72,21 +72,21 @@ export interface BranchEntity {
   latitude: number;
   longitude: number;
   maxUsersLimit: number;
-  phone:string;
-  email:string;
+  phone: string;
+  email: string;
   owner: {
     phone: string;
     name: string;
     email: string;
-    cnic:string;
+    cnic: string;
   }
   subscription: {
     tier: SubscriptionTier
     cycle: SubscriptionCycle
     renewDate: Date
   }
-  createdAt:Date
-  updatedAt:Date
+  createdAt: Date
+  updatedAt: Date
 }
 
 // --- Extended Branch Detail (Used in Single Branch Overview / Dashboard) ---
@@ -100,6 +100,9 @@ export interface BranchDetail extends BranchEntity {
 
   users?: BranchUser[];
   invoices?: PaymentInvoice[];
+  _count?: {
+    users: number;
+  };
 
   metrics?: {
     totalCustomers: number;

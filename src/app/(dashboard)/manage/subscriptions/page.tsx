@@ -5,13 +5,11 @@ import { useBranchStats, useBranches } from "@/features/branches/api/use-branche
 import { SubscriptionStats } from "@/features/subscriptions/components/subscription-stats";
 import { SubscriptionTable } from "@/features/subscriptions/components/subscription-table";
 import { BranchStatus } from "@/types/branch";
-import { useRouter } from "next/navigation";
 
 export default function SubscriptionsPage() {
-  const router = useRouter();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [statusFilter, setStatusFilter] = useState<"ALL" | BranchStatus>("ALL");
 
   // Fetch stats for the top cards
   const { data: statsData, isLoading: isStatsLoading } = useBranchStats();
@@ -32,7 +30,7 @@ export default function SubscriptionsPage() {
   };
 
   const handleStatusChange = (status: string) => {
-    setStatusFilter(status);
+    setStatusFilter(status as "ALL" | BranchStatus);
     setPage(1);
   };
 

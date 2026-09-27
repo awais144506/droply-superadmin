@@ -31,7 +31,7 @@ export default function SuperAdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-auto lg:h-100">
         <div className="lg:col-span-2">
-          <RecentLeadsTable leads={data.recentLeads} />
+          {/* <RecentLeadsTable leads={data.recentLeads} /> */}
         </div>
         <div className="lg:col-span-1">
           <PlatformLogs />

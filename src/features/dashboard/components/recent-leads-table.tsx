@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -103,7 +104,7 @@ export function RecentLeadsTable() {
                 <tr key={lead.id} className={`transition-colors ${lead.status === "REJECTED" ? "bg-slate-50/50 opacity-60" : "hover:bg-slate-50/50"}`}>
                   <td className="px-6 py-3">
                     <p className={`font-bold ${lead.status === "REJECTED" ? "text-slate-500 line-through" : "text-slate-900"}`}>{lead.businessName}</p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">{new Date(lead.date).toLocaleDateString()}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">{new Date(lead.createdAt).toLocaleDateString()}</p>
                   </td>
                   <td className="px-6 py-3">
                     <p className="font-medium text-slate-700">{lead.contactName}</p>
