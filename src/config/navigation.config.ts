@@ -1,15 +1,9 @@
 import {
   Building2,
   CreditCard,
-  MessageSquare,
-  FileCheck,
-  BarChart3,
   Users,
-  Settings,
-  Layers,
   Banknote,
   LucideIcon,
-  FileText,
 } from "lucide-react";
 
 export type UserRole = "SUPER_ADMIN" | "SUPPORT_ADMIN";
@@ -55,24 +49,6 @@ export const BRANCH_NAV_CONFIG: NavGroup[] = [
         icon: CreditCard,
         allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
       },
-      {
-        title: "Payment Clearance",
-        url: "/manage/clearances",
-        icon: FileCheck,
-        allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
-      },
-      // {
-      //   title: "Revenue Reports",
-      //   url: "/manage/reports",
-      //   icon: BarChart3,
-      //   allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
-      // },
-      {
-        title: "Support Tickets",
-        url: "/manage/tickets",
-        icon: MessageSquare,
-        allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
-      },
     ],
   },
   {
@@ -84,14 +60,14 @@ export const BRANCH_NAV_CONFIG: NavGroup[] = [
       bgHover: "hover:bg-rose-500/5",
     },
     items: [
+      // {
+      //   title: "Team & Admins", // Renamed for clarity
+      //   url: "/platform/team",
+      //   icon: Users,
+      //   badge: "Admin",
+      //   allowedRoles: ["SUPER_ADMIN"],
+      // },
       {
-        title: "Team & Admins", // Renamed for clarity
-        url: "/platform/team",
-        icon: Users,
-        badge: "Admin",
-        allowedRoles: ["SUPER_ADMIN"],
-      },
-           {
         title: "Bank Details", // Renamed for clarity
         url: "/platform/bank",
         icon: Banknote,

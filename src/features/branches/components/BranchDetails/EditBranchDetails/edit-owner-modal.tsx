@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "sonner";
 import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useUpdateBranchOwner } from "@/features/branches/api/use-branches";
+import { useUpdateBranchOwner } from "@/features/branches/api/use-branch";
 import { editOwnerSchema, EditOwnerFormData } from "@/features/branches/schema/edit-owner.schema";
 
 interface EditOwnerModalProps {

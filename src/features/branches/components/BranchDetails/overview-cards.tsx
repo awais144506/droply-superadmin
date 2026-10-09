@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/card";
 import { Clock, Users, Calendar, CreditCard } from "lucide-react";
 import { BranchEntity } from "@/types/branch";
-import { getPlanBadge } from "@/lib/utils/badges";
+import { getPlanBadge } from "@/lib/badges";
 
 interface BranchOverViewCardProps {
   branch: BranchEntity;

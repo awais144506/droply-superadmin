@@ -27,33 +27,6 @@ export function GlobalStats({ stats }: { stats: SuperAdminStats }) {
         </div>
       </div>
 
-      {/* Clearances Card */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-        <div>
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending Clearances</p>
-            <div className="p-2 bg-amber-50 rounded-lg text-amber-600"><CreditCard className="h-4 w-4" /></div>
-          </div>
-          <p className="text-3xl font-bold text-amber-600">{stats.pendingClearances}</p>
-        </div>
-        <p className="text-[11px] font-medium text-slate-400 mt-4">Awaiting manual bank verification</p>
-      </div>
-
-      {/* Support Tickets Card */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-        <div>
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Support Tickets</p>
-            <div className="p-2 bg-rose-50 rounded-lg text-rose-600"><MessageSquare className="h-4 w-4" /></div>
-          </div>
-          <p className="text-3xl font-bold text-rose-600">{stats.openTickets} <span className="text-sm font-medium text-slate-400">Open</span></p>
-        </div>
-        <div className="flex items-center gap-3 mt-4 text-[11px] font-bold">
-          <span className="flex items-center gap-1 text-amber-600"><Reply className="h-3 w-3" /> {stats.repliedTickets} Replied</span>
-          <span className="flex items-center gap-1 text-emerald-600"><CheckCircle2 className="h-3 w-3" /> {stats.resolvedTickets} Resolved</span>
-        </div>
-      </div>
-
       {/* Website Leads Card */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div>

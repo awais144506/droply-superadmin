@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { getStatusBadge, getPlanBadge } from "@/lib/utils/badges";
+import { getStatusBadge, getPlanBadge } from "@/lib/badges";
 import { BranchEntity } from "@/types/branch";
 import { Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";

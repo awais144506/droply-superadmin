@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "sonner";
 import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useUpdateBranchDetails } from "@/features/branches/api/use-branches";
+import { useUpdateBranchDetails } from "@/features/branches/api/use-branch";
 import { editBranchSchema, EditBranchFormData } from "@/features/branches/schema/edit-branch-schema";
 import { BranchEntity } from "@/types/branch";
 

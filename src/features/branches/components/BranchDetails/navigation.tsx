@@ -6,7 +6,7 @@ import { ArrowLeft, Settings2, Ban, CheckCircle2, Loader2, CreditCard, FileText 
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { BranchEntity } from "@/types/branch";
-import { useUpdateBranchStatus } from "@/features/branches/api/use-branches";
+import { useUpdateBranchStatus } from "@/features/branches/api/use-branch";
 import { toast } from "sonner";
 import {
     AlertDialog,
