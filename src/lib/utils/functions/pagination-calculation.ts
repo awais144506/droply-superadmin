@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-import { ITEMS_PER_PAGE } from "@/constants/constants";
+import { ITEMS_PER_PAGE } from "@/app/constants/constants";
 
 export function usePagination<T>(data?: T[], itemsPerPage = ITEMS_PER_PAGE) {
     const [currentPage, setCurrentPage] = useState(1);

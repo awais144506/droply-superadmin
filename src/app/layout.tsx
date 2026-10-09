@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 
 
@@ -27,7 +27,7 @@ export default function RootLayout({
         <body className={inter.className}>
           <QueryProvider>
             {children}
-            <Toaster richColors position="top-right" />
+            <Toaster position="top-center" />
           </QueryProvider>
         </body>
       </html>

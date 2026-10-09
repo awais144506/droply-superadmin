@@ -6,19 +6,20 @@ import MainPageHeader from "@/lib/utils/components/MainPageHeader";
 import { DataTableFilterBar } from "@/components/ui/data-table-filter-bar";
 import ActivityLogsCard from "@/lib/utils/components/ActivityLogsMainPage";
 import { BranchTable } from "@/features/branches/components/main/branch-table";
+import { useSearchParams } from "next/navigation";
+import ErrorBoundary from "@/app/error";
+import Loading from "@/app/loading";
 
 export default function BranchesPage() {
-  // Destructure data with a fallback empty object to avoid undefined errors during loading
-  const { data = { stats: null, branches: [], logs: [] }, isLoading, isError } = useAllBranches();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || undefined;
+  const status = searchParams.get("status") || undefined;
+
+  const { data = { stats: null, branches: [], logs: [] }, isLoading, isError, error } = useAllBranches(search, status);
   const { stats, branches, logs } = data;
 
-  if (isError) {
-    return (
-      <div className="p-6 text-red-500">
-        Failed to load branches. Please refresh the page.
-      </div>
-    );
-  }
+  if (isError) return <ErrorBoundary error={error.message} />
+  if (isLoading) return <Loading text="Loading Branches..." />
 
   return (
     <div className="space-y-6 min-w-6xl mx-auto p-6">
@@ -41,13 +42,25 @@ export default function BranchesPage() {
         />
       )}
 
-      <DataTableFilterBar />
-
+      <DataTableFilterBar
+        searchParamName="search"
+        searchPlaceholder="Search by code / name..."
+        tabParamName="status"
+        tabs={[
+          { label: "All", value: "" },
+          { label: "Active", value: "ACTIVE" },
+          { label: "Past Due", value: "PAST_DUE" },
+          { label: "Suspend", value: "SUSPENDED" }
+        ]}
+      />
+      <BranchTable
+        branches={branches}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <ActivityLogsCard
+            title="Branch Management Logs"
             logs={logs}
-            isLoading={isLoading}
           />
         </div>
       </div>
