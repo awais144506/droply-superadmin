@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 
 export interface BankDetailEntity {
   id: string;
   bankName: string;
-  accountTitle: string;
-  accountNumber: string;
+  title: string;
+  number: string;
   iban?: string;
   qrCodeUrl?: string;
   isActive: boolean;
@@ -20,7 +21,7 @@ export function useBankDetails() {
   return useQuery({
     queryKey: bankKeys.lists(),
     queryFn: async (): Promise<BankDetailEntity[]> => {
-      const response: any = await apiClient.get("/bank-details");
+      const response: any = await apiClient.get("/bank");
       return response?.data || response;
     },
   });
@@ -30,7 +31,7 @@ export function useCreateBankDetail() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: Partial<BankDetailEntity>) => {
-      return apiClient.post("/bank-details", data);
+      return apiClient.post("/bank", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: bankKeys.lists() });

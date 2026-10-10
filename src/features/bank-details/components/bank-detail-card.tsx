@@ -46,7 +46,7 @@ export function BankDetailCard({ account, onEdit, onDelete }: BankDetailCardProp
 
       <CardContent className="p-0">
         {/* BIG QR CODE SECTION */}
-        <div className="w-full bg-slate-50 border-b border-slate-100 flex items-center justify-center p-6 min-h-[250px]">
+        <div className="w-full bg-slate-50 border-b border-slate-100 flex items-center justify-center p-6 min-h-62.5">
           {account.qrCodeUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img 
@@ -70,11 +70,11 @@ export function BankDetailCard({ account, onEdit, onDelete }: BankDetailCardProp
           </p>
           <p className="text-sm text-slate-900">
             <span className="font-semibold text-slate-500 w-24 inline-block">A/C Title:</span> 
-            {account.accountTitle}
+            {account.title}
           </p>
           <p className="text-sm text-slate-900">
             <span className="font-semibold text-slate-500 w-24 inline-block">A/C Number:</span> 
-            <span className="font-mono font-medium">{account.accountNumber}</span>
+            <span className="font-mono font-medium">{account.number}</span>
           </p>
           {account.iban && (
             <p className="text-sm text-slate-900">

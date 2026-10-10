@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -12,8 +13,8 @@ import { useCreateBankDetail, useUpdateBankDetail, BankDetailEntity } from "../a
 
 const bankSchema = yup.object({
   bankName: yup.string().required("Bank name is required"),
-  accountTitle: yup.string().required("Account title is required"),
-  accountNumber: yup.string().required("Account number is required"),
+  title: yup.string().required("Account title is required"),
+  number: yup.string().required("Account number is required"),
   iban: yup.string().optional(),
 }).required();
 
@@ -35,8 +36,8 @@ export function BankForm({ initialData, onSuccessCallback }: BankFormProps) {
     resolver: yupResolver(bankSchema),
     defaultValues: {
       bankName: initialData?.bankName || "",
-      accountTitle: initialData?.accountTitle || "",
-      accountNumber: initialData?.accountNumber || "",
+      title: initialData?.title || "",
+      number: initialData?.number || "",
       iban: initialData?.iban || "",
     },
   });
@@ -48,8 +49,8 @@ export function BankForm({ initialData, onSuccessCallback }: BankFormProps) {
     try {
       if (file) {
         const uploadResponse = await uploadFiles("bankQrUploader", { files: [file] });
-        if (uploadResponse?.[0]?.url) {
-          qrCodeUrl = uploadResponse[0].url;
+        if (uploadResponse?.[0]?.ufsUrl) {
+          qrCodeUrl = uploadResponse[0].ufsUrl;
         }
       }
 
@@ -65,7 +66,7 @@ export function BankForm({ initialData, onSuccessCallback }: BankFormProps) {
       
       onSuccessCallback();
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Operation failed.");
+      toast.error(error.message || "Operation failed.");
     } finally {
       setIsUploading(false);
     }
@@ -86,19 +87,19 @@ export function BankForm({ initialData, onSuccessCallback }: BankFormProps) {
       <div className="space-y-1.5">
         <label className="text-xs font-medium text-slate-700">Account Title *</label>
         <input
-          {...register("accountTitle")}
+          {...register("title")}
           className="w-full h-9 rounded-md border border-input bg-background px-3 text-xs outline-none focus:ring-1 focus:ring-ring"
         />
-        {errors.accountTitle && <p className="text-[10px] text-destructive">{errors.accountTitle.message}</p>}
+        {errors.title && <p className="text-[10px] text-destructive">{errors.title.message}</p>}
       </div>
 
       <div className="space-y-1.5">
         <label className="text-xs font-medium text-slate-700">Account Number *</label>
         <input
-          {...register("accountNumber")}
+          {...register("number")}
           className="w-full h-9 rounded-md border border-input bg-background px-3 text-xs font-mono outline-none focus:ring-1 focus:ring-ring"
         />
-        {errors.accountNumber && <p className="text-[10px] text-destructive">{errors.accountNumber.message}</p>}
+        {errors.number && <p className="text-[10px] text-destructive">{errors.number.message}</p>}
       </div>
 
       <div className="space-y-1.5">
