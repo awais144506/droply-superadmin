@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import {
     MapPin,
     Phone,
-    Building2,
-    Globe,
-    Pencil,
+    Store,
+    Globe
 } from "lucide-react";
 import {
     Card,
@@ -14,75 +12,65 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { BranchEntity } from "@/types/branch";
-import { EditBranchModal } from "./EditBranchDetails/edit-branch-modal";
+import { BranchDetails as BranchType } from "../../types/branch";
+import { formatPhoneNumber } from "react-phone-number-input";
 
 interface BranchDetailsProps {
-    branch: BranchEntity;
+    branch: BranchType;
 }
 
 export default function BranchDetails({ branch }: BranchDetailsProps) {
-    const [isEditOpen, setIsEditOpen] = useState(false);
 
     return (
-        <>
-            <Card>
-                <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-primary" />
-                        Branch Details
-                    </CardTitle>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsEditOpen(true)}
-                        className="h-7 text-xs gap-1.5 cursor-pointer"
-                    >
-                        <Pencil className="h-3 w-3" /> Edit Details
-                    </Button>
-                </CardHeader>
-                <CardContent className="pt-4 space-y-3.5 text-xs">
-                    <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <Building2 className="h-3.5 w-3.5" /> Branch Name
-                        </span>
-                        <span className="font-semibold text-foreground">{branch.name}</span>
+        <Card className="shadow-sm border-slate-200/80 rounded-2xl overflow-hidden">
+            <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-4 md:p-5">
+                <CardTitle className="text-sm font-bold flex items-center gap-2.5 text-slate-800">
+                    <div className="p-1.5 bg-blue-100 text-blue-700 rounded-lg">
+                        <Store className="h-4 w-4" />
                     </div>
-                    <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <MapPin className="h-3.5 w-3.5" /> Address
-                        </span>
-                        <span className="font-mono text-foreground text-right max-w-[200px] truncate" title={branch.address}>
-                            {branch.address || "N/A"}
-                        </span>
-                    </div>
-                    <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <Phone className="h-3.5 w-3.5" /> Phone
-                        </span>
-                        <span className="font-mono text-foreground">{branch.phone || "N/A"}</span>
-                    </div>
-                    <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <Globe className="h-3.5 w-3.5" /> Latitude
-                        </span>
-                        <span className="font-mono text-foreground">{branch.latitude ?? "N/A"}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <Globe className="h-3.5 w-3.5" /> Longitude
-                        </span>
-                        <span className="font-mono text-foreground">{branch.longitude ?? "N/A"}</span>
-                    </div>
-                </CardContent>
-            </Card>
+                    Location & Contact Info
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 md:p-5 flex flex-col gap-3.5 text-sm">
 
-            <EditBranchModal
-                branch={branch}
-                isOpen={isEditOpen}
-                onClose={() => setIsEditOpen(false)}
-            />
-        </>
+                <div className="flex justify-between items-center pb-3 border-b border-dashed border-slate-200">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium">
+                        <Store className="h-4 w-4 text-slate-400" /> Branch Name
+                    </span>
+                    <span className="text-slate-900 font-bold">{branch.name}</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-3 border-b border-dashed border-slate-200">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium shrink-0">
+                        <MapPin className="h-4 w-4 text-slate-400" /> Address
+                    </span>
+                    <span className="text-slate-900 font-bold text-right" title={branch.address}>
+                        {branch.address || "N/A"}
+                    </span>
+                </div>
+
+                <div className="flex justify-between items-center pb-3 border-b border-dashed border-slate-200">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium">
+                        <Phone className="h-4 w-4 text-slate-400" /> Phone
+                    </span>
+                    <span className="text-slate-900 font-bold">{formatPhoneNumber(branch.phone )|| "N/A"}</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-3 border-b border-dashed border-slate-200">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium">
+                        <Globe className="h-4 w-4 text-slate-400" /> Latitude
+                    </span>
+                    <span className="text-slate-900 font-bold font-mono text-[13px]">{branch.lat}</span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium">
+                        <Globe className="h-4 w-4 text-slate-400" /> Longitude
+                    </span>
+                    <span className="text-slate-900 font-bold font-mono text-[13px]">{branch.lng}</span>
+                </div>
+
+            </CardContent>
+        </Card>
     );
 }

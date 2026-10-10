@@ -1,110 +1,91 @@
-"use client";
-
-import { useState } from "react";
 import {
     Building2,
     Calendar,
     Mail,
     Phone,
     User,
-    ShieldCheck,
-    Pencil,
+    ShieldCheck
 } from "lucide-react";
 import {
     Card,
     CardContent,
     CardHeader,
-    CardTitle,
+    CardTitle
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { BranchEntity } from "@/types/branch";
-import { EditOwnerModal } from "./EditBranchDetails/edit-owner-modal";
+import { BranchDetails, BranchOwner } from "../../types/branch";
+import { formatPhoneNumber } from "react-phone-number-input";
 
 interface BranchOwnerDetailsProps {
-    branch: BranchEntity & { owner?: { cnic?: string; name: string; email: string; phone: string } };
+    branch: BranchDetails;
+    owner: BranchOwner;
 }
 
-export default function BranchOwnerDetails({ branch }: BranchOwnerDetailsProps) {
-    const [isEditOpen, setIsEditOpen] = useState(false);
-    const owner = branch.owner;
+export default function BranchOwnerDetails({ branch, owner }: BranchOwnerDetailsProps) {
+
+    const formatDate = (dateString?: string) => {
+        if (!dateString) return "N/A";
+        return new Date(dateString).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+        });
+    };
 
     return (
-        <>
-            <Card>
-                <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-primary" />
-                        Branch Owner Details
-                    </CardTitle>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsEditOpen(true)}
-                        className="h-7 text-xs gap-1.5 cursor-pointer"
-                    >
-                        <Pencil className="h-3 w-3" /> Edit Owner
-                    </Button>
-                </CardHeader>
-                <CardContent className="pt-4 space-y-3.5 text-xs">
-                    <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <User className="h-3.5 w-3.5" /> Owner Name
-                        </span>
-                        <span className="text-foreground font-medium">{owner?.name || "N/A"}</span>
+        <Card className="shadow-sm border-slate-200/80 rounded-2xl overflow-hidden">
+            <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-4 md:p-5">
+                <CardTitle className="text-sm font-bold flex items-center gap-2.5 text-slate-800">
+                    <div className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg">
+                        <Building2 className="h-4 w-4" />
                     </div>
-                    <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <Mail className="h-3.5 w-3.5" /> Email
-                        </span>
-                        <span className="font-medium text-foreground">{owner?.email || "N/A"}</span>
-                    </div>
-                    <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <Phone className="h-3.5 w-3.5" /> WhatsApp/Phone
-                        </span>
-                        <span className="font-medium text-foreground">{owner?.phone || "N/A"}</span>
-                    </div>
-                    <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> CNIC
-                        </span>
-                        <span className="font-medium text-foreground">{owner?.cnic || "N/A"}</span>
-                    </div>
-                    <div className="flex justify-between items-center pb-2 border-b border-dashed">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <Calendar className="h-3.5 w-3.5" /> Registered Date
-                        </span>
-                        <span className="text-foreground font-medium">
-                            {new Date(branch.createdAt).toLocaleDateString("en-GB", {
-                                day: "2-digit",
-                                month: "long",
-                                year: "numeric",
-                            })}
-                        </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                            <Calendar className="h-3.5 w-3.5" /> Last Updated
-                        </span>
-                        <span className="text-foreground font-medium">
-                            {branch.updatedAt
-                                ? new Date(branch.updatedAt).toLocaleDateString("en-GB", {
-                                    day: "2-digit",
-                                    month: "long",
-                                    year: "numeric",
-                                })
-                                : "N/A"}
-                        </span>
-                    </div>
-                </CardContent>
-            </Card>
+                    Branch & Owner Profile
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 md:p-5 flex flex-col gap-3.5 text-sm">
 
-            <EditOwnerModal
-                branchId={branch.id}
-                owner={owner}
-                isOpen={isEditOpen}
-                onClose={() => setIsEditOpen(false)}
-            />
-        </>
+                <div className="flex justify-between items-center pb-3 border-b border-dashed border-slate-200">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium">
+                        <User className="h-4 w-4 text-slate-400" /> Owner Name
+                    </span>
+                    <span className="text-slate-900 font-bold">{owner?.name || "N/A"}</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-3 border-b border-dashed border-slate-200">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium">
+                        <Mail className="h-4 w-4 text-slate-400" /> Email Address
+                    </span>
+                    <span className="text-slate-900 font-bold">{owner?.email || "N/A"}</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-3 border-b border-dashed border-slate-200">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium">
+                        <Phone className="h-4 w-4 text-slate-400" /> WhatsApp / Phone
+                    </span>
+                    <span className="text-slate-900 font-bold">{formatPhoneNumber(owner?.phone) || "N/A"}</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-3 border-b border-dashed border-slate-200">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium">
+                        <ShieldCheck className="h-4 w-4 text-emerald-500" /> CNIC
+                    </span>
+                    <span className="text-slate-900 font-bold">{owner?.cnic || "N/A"}</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-3 border-b border-dashed border-slate-200">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium">
+                        <Calendar className="h-4 w-4 text-slate-400" /> Registered Date
+                    </span>
+                    <span className="text-slate-700 font-semibold">{formatDate(branch.createdAt)}</span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                    <span className="text-slate-500 flex items-center gap-2 font-medium">
+                        <Calendar className="h-4 w-4 text-slate-400" /> Last Updated
+                    </span>
+                    <span className="text-slate-700 font-semibold">{formatDate(branch.updatedAt)}</span>
+                </div>
+
+            </CardContent>
+        </Card>
     );
 }

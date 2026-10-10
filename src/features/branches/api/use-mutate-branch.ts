@@ -21,3 +21,23 @@ export function useCreateBranch() {
         },
     })
 }
+
+export function useUpdateBranch() {
+    const queryClient = useQueryClient();
+    const router = useRouter();
+
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string; data: Partial<CreateBranchFormData> }) => branchService.updateBranch(id, data),
+        onSuccess: (data, variables) => {
+            toast.success("Branch updated successfully!");
+            queryClient.invalidateQueries({ queryKey: branchKeys.detail(variables.id) });
+            queryClient.invalidateQueries({ queryKey: branchKeys.lists() });
+            router.push(`/manage/branches/${variables.id}`);
+        },
+        onError: (error) => {
+            toast.error(
+                error?.message || "Failed to update branch. Please try again."
+            );
+        },
+    });
+}

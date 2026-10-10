@@ -29,3 +29,11 @@ export function useAllBranches(searchFilter?: string, statusFilter?: string) {
         },
     });
 }
+
+export function useBranchById(id: string) {
+    return useQuery({
+        queryKey: branchKeys.detail(id),
+        queryFn: () => branchService.getBranchById(id),
+        enabled: Boolean(id),
+    });
+}

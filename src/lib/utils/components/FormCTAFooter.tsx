@@ -1,14 +1,12 @@
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Loader2, LucideIcon, Save } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type Props = {
     isPending: boolean;
     isValid: boolean;
     isDirty: boolean;
     isEditMode?: boolean;
-    href?: string;
     setStep?: (role: string) => void;
     ctaText?: string;
     icon?: LucideIcon;
@@ -22,7 +20,6 @@ export default function FormCTAFooter({
     isValid,
     isDirty,
     isEditMode = false,
-    href = "",
     setStep,
     ctaText = "Save Changes",
     icon: ActionIcon,
@@ -30,6 +27,8 @@ export default function FormCTAFooter({
     varient = "default",
     cancelVarient = "outline",
 }: Props) {
+    const router = useRouter();
+    
     return (
         <div className="flex items-center justify-between gap-3 border-t border-slate-200 pt-6 mt-8">
             <div>
@@ -38,6 +37,7 @@ export default function FormCTAFooter({
                         type="button"
                         variant="outline"
                         onClick={() => setStep("SELECT_ROLE")}
+                        disabled={isPending} // Disabled while creating/editing
                     >
                         Change Role
                     </Button>
@@ -46,12 +46,14 @@ export default function FormCTAFooter({
 
             <div className="flex items-center gap-3">
                 {isCancel && (
-                    <Link
-                        href={href}
-                        className={cn(buttonVariants({ variant: cancelVarient  }))}
+                    <Button
+                        type="button"
+                        disabled={isPending}
+                        onClick={() => router.back()}
+                        variant={cancelVarient}
                     >
                         Cancel
-                    </Link>
+                    </Button>
                 )}
 
                 <Button

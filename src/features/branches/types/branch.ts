@@ -1,9 +1,9 @@
-
 // --- ENUMS / TYPES ---
 export type BranchStatus = "ACTIVE" | "PAST_DUE" | "SUSPENDED" | "ARCHIVED";
 export type SubscriptionCycle = "TRIAL" | "MONTHLY" | "YEARLY";
 export type SubscriptionTier = "SILVER" | "GOLD" | "PLATINUM";
 export type ActivityLogStatus = "UNREAD" | "READ";
+export type StaffStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED";
 
 // --- MODELS ---
 export interface BranchOwner {
@@ -11,6 +11,7 @@ export interface BranchOwner {
   name: string;
   email: string;
   phone: string;
+  cnic: string;
   createdAt: string;
 }
 
@@ -19,6 +20,15 @@ export interface Subscription {
   cycle: SubscriptionCycle;
   tier: SubscriptionTier;
   renewDate: string;
+}
+
+export interface BranchStaffItem {
+  id: string;
+  name: string;
+  role: string;
+  phone: string;
+  cnic: string;
+  status: StaffStatus;
 }
 
 export interface ActivityLog {
@@ -32,20 +42,30 @@ export interface ActivityLog {
   createdAt: string;
 }
 
-// --- MAIN BRANCH OBJECT ---
-export interface Branch {
+// --- BASE BRANCH DETAILS (Without nested relations) ---
+export interface BranchDetails {
+  ntn: string;
+  strn: string;
+  userLimit: number;
   id: string;
   branchCode: string;
   name: string;
   phone: string;
   address: string;
+  lat: string;
+  lng: string;
   status: BranchStatus;
   createdAt: string;
+  updatedAt?: string;
+}
+
+// --- FULL BRANCH (Used in Table/List Views) ---
+export interface Branch extends BranchDetails {
   owner: BranchOwner;
   subscription: Subscription;
 }
 
-
+// --- DASHBOARD LIST RESPONSE ---
 export interface BranchDashboardStats {
   total: number;
   active: number;
@@ -57,4 +77,13 @@ export interface FetchBranchesResponse {
   stats: BranchDashboardStats;
   branches: Branch[];
   logs: ActivityLog[];
+}
+
+// --- SINGLE BRANCH DETAILS RESPONSE ---
+export interface BranchByIdResponse {
+  branch: BranchDetails;
+  owner: BranchOwner;
+  subscription: Subscription;
+  staff: BranchStaffItem[];
+  customers: number;
 }
