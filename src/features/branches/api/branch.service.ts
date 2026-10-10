@@ -13,7 +13,9 @@ export const branchService = {
         return await apiClient.get(`branches/${id}`)
     },
     updateBranch: async (id: string, updateBranch: Partial<CreateBranchFormData>) => {
-        const response = await apiClient.patch(`/branches/${id}`, updateBranch);
-        return response.data;
+        return await apiClient.patch(`/branches/${id}`, updateBranch);
     },
+    updateBranchStatus: async ({ id, status }: { id: string; status: "ACTIVE" | "SUSPENDED" }) => {
+        return apiClient.patch(`/branches/${id}/status`, { status });
+    }
 }

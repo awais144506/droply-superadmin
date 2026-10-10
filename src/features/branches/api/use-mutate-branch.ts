@@ -41,3 +41,22 @@ export function useUpdateBranch() {
         },
     });
 }
+
+export function useUpdateBranchStatus() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: branchService.updateBranchStatus,
+        onSuccess: (_, variables) => {
+            const action = variables.status === "ACTIVE" ? "activated" : "suspended";
+            toast.success(`Branch successfully ${action}!`);
+            queryClient.invalidateQueries({ queryKey: branchKeys.detail(variables.id) });
+            queryClient.invalidateQueries({ queryKey: branchKeys.lists() });
+        },
+        onError: (error) => {
+            toast.error(
+                error?.message || "Failed to update branch status."
+            );
+        },
+    });
+}
