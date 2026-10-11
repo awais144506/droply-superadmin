@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Settings2, Ban, CheckCircle2, Pen, Store, Loader2 } from "lucide-react";
+import { ArrowLeft, Settings2, Ban, CheckCircle2, Pen, Store, Loader2, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { BranchDetails } from "../../types/branch";
@@ -65,13 +65,12 @@ export default function TopNavigationBranch({ branch }: TopNavigationBranchProps
                                 </h1>
                                 <Badge
                                     variant="outline"
-                                    className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 border ${
-                                        branch.status === "ACTIVE"
-                                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                            : branch.status === "PAST_DUE"
+                                    className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 border ${branch.status === "ACTIVE"
+                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                        : branch.status === "PAST_DUE"
                                             ? "bg-amber-50 text-amber-700 border-amber-200"
                                             : "bg-rose-50 text-rose-700 border-rose-200"
-                                    }`}
+                                        }`}
                                 >
                                     {branch.status.replace("_", " ")}
                                 </Badge>
@@ -86,10 +85,10 @@ export default function TopNavigationBranch({ branch }: TopNavigationBranchProps
                 {/* Right: Actions */}
                 <div className="flex items-center flex-wrap gap-2 md:gap-3">
                     <Link
-                        href={`/manage/subscriptions/${branch.id}`}
-                        className={buttonVariants({ variant: "outline", size: "sm", className: "h-9 text-xs font-semibold text-slate-700 hover:bg-slate-50" })}
+                        href={`/manage/branches/${branch.id}/subscription`}
+                        className={buttonVariants({ variant: "default", })}
                     >
-                        <Settings2 className="h-3.5 w-3.5 mr-1.5 text-slate-400" />
+                        <CreditCard className="h-3.5 w-3.5 mr-1.5" />
                         Subscription
                     </Link>
                     <Link
@@ -105,11 +104,10 @@ export default function TopNavigationBranch({ branch }: TopNavigationBranchProps
                     <Button
                         size="sm"
                         onClick={() => setIsConfirmOpen(true)}
-                        className={`h-9 text-xs font-bold transition-all shadow-sm ${
-                            isSuspended
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
-                                : "bg-white text-rose-600 border border-rose-200 hover:bg-rose-50 hover:border-rose-300"
-                        }`}
+                        className={`h-9 text-xs font-bold transition-all shadow-sm ${isSuspended
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
+                            : "bg-white text-rose-600 border border-rose-200 hover:bg-rose-50 hover:border-rose-300"
+                            }`}
                     >
                         {isSuspended ? (
                             <>
@@ -147,11 +145,10 @@ export default function TopNavigationBranch({ branch }: TopNavigationBranchProps
                                 handleConfirm();
                             }}
                             disabled={isPending}
-                            className={`rounded-xl font-bold ${
-                                isSuspended 
-                                    ? "bg-emerald-600 hover:bg-emerald-700 text-white" 
-                                    : "bg-rose-600 hover:bg-rose-700 text-white"
-                            }`}
+                            className={`rounded-xl font-bold ${isSuspended
+                                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                                : "bg-rose-600 hover:bg-rose-700 text-white"
+                                }`}
                         >
                             {isPending ? (
                                 <>

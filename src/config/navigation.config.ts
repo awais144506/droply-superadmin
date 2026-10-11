@@ -44,12 +44,6 @@ export const BRANCH_NAV_CONFIG: NavGroup[] = [
         allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
       },
       {
-        title: "Active Subscriptions",
-        url: "/manage/subscriptions",
-        icon: CreditCard,
-        allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
-      },
-      {
         title: "Website Leads",
         url: "/manage/leads",
         icon: Globe,
