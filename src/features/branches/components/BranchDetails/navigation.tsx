@@ -72,7 +72,7 @@ export default function TopNavigationBranch({ branch }: TopNavigationBranchProps
                                             : "bg-rose-50 text-rose-700 border-rose-200"
                                         }`}
                                 >
-                                    {branch.status.replace("_", " ")}
+                                    {branch.status}
                                 </Badge>
                             </div>
                             <p className="text-xs font-medium text-slate-500 mt-0.5">
