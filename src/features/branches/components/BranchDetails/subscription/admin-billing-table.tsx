@@ -57,12 +57,6 @@ export default function AdminBillingTable({ ledger }: Props) {
                 <DataTable columns={columns} data={paginatedData} />
             </div>
 
-            {ledger.length === 0 && (
-                <div className="p-12 text-center flex flex-col items-center justify-center">
-                    <p className="text-sm font-medium text-slate-500">No payment history found for this branch.</p>
-                </div>
-            )}
-
             {(totalItems || 0) > 0 && (
                 <div className="border-t border-slate-100 bg-slate-50/50 p-4">
                     <TablePagination

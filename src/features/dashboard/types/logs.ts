@@ -16,11 +16,8 @@ export interface SubscriptionLog {
 }
 
 export interface AdminLogsResponse {
-  success: boolean;
-  data: {
     unreadCount: number;
     unreadLogs: SubscriptionLog[];
     readLogs: SubscriptionLog[];
     allLogs: SubscriptionLog[];
-  };
 }

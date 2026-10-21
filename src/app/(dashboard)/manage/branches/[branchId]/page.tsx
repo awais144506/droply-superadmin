@@ -22,8 +22,8 @@ export default function BranchDetailPage() {
     if (isLoading) return <Loading text="Loading Branch..." />
     if (isError || !branch) return <Error error={error?.message} />
 
-    const lat = Number(branch.lat) || 33.6844;
-    const lng = Number(branch.lng) || 73.0479;
+    const lat = Number(branch.latitude) || 33.6844;
+    const lng = Number(branch.longitude) || 73.0479;
 
 
     return (

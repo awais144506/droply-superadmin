@@ -1,57 +1,37 @@
 "use client";
-
-import React from "react";
 import { useParams } from "next/navigation";
-import { Loader2, AlertCircle, Building2, CreditCard } from "lucide-react";
+import { CreditCard } from "lucide-react";
 import { useAdminBranchHistory } from "@/features/branches/api/use-subscription";
 import AdminBillingTable from "@/features/branches/components/BranchDetails/subscription/admin-billing-table";
+import Loading from "@/app/loading";
+import ErrorBoundary from "@/app/error";
+import MainPageHeader from "@/lib/utils/components/MainPageHeader";
 
 export default function SubscriptionPage() {
     const params = useParams();
     const branchId = params.branchId as string;
 
-    const { data, isLoading, isError } = useAdminBranchHistory(branchId);
+    const { data, isLoading, isError, error, refetch, isRefetching } = useAdminBranchHistory(branchId);
 
     const branch = data?.branch;
     const subscription = data?.subscription;
     const payments = data?.payments
-    // --- LOADING STATE ---
-    if (isLoading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh]">
-                <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mb-4" />
-                <p className="text-sm font-medium text-slate-500">Loading branch details...</p>
-            </div>
-        );
-    }
-
-    // --- ERROR STATE ---
-    if (isError || !data) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] bg-white rounded-2xl border border-slate-200">
-                <AlertCircle className="w-10 h-10 text-rose-500 mb-4" />
-                <p className="text-base font-bold text-slate-900">Failed to load data</p>
-                <p className="text-sm font-medium text-slate-500 mt-1">Could not fetch subscription history.</p>
-            </div>
-        );
-    }
+    if (isLoading) return <Loading text="Loading Subscription..." />
+    if (isError) return <ErrorBoundary error={error.message} />
 
     return (
-        <div className="p-4 sm:p-6 max-w-[1400px] mx-auto space-y-6 bg-slate-50 min-h-screen">
-
-            {/* --- PAGE HEADER --- */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                        <Building2 className="w-6 h-6 text-indigo-600" />
-                        {branch?.name || "Unknown Branch"}
-                    </h1>
-                    <p className="text-sm text-slate-500 font-medium mt-1">
-                        Manage active subscription and review payment ledger.
-                    </p>
-                </div>
-            </div>
-
+        <div className="p-4 sm:p-6 space-y-6 min-h-screen">
+            <MainPageHeader
+                heading={`${branch?.name}` || "Unknow"}
+                description="Manage active subscription and review payment ledger."
+                onRefresh={refetch}
+                isRefreshing={isRefetching}
+                breadcrumbs={[
+                    { label: "Branches", href: "/manage/branches" },
+                    { label: branch?.name || "Branch Details", href: `/manage/branches/${branchId}` },
+                    { label: "Subscription & Ledger", href: `/manage/branches/${branchId}/subscription` },
+                ]}
+            />
             {/* --- TOP ROW: CURRENT PLAN DETAILS --- */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -93,8 +73,8 @@ export default function SubscriptionPage() {
                     <p className="text-4xl font-black">
                         {payments?.length || 0}
                     </p>
-                    <p className="text-sm text-slate-400 mt-2 font-medium">
-                        Pending verification: {payments?.filter((p: any) => p.status === 'PENDING').length || 0}
+                    <p className="text-lg text-amber-400 mt-2 font-semibold">
+                        Pending verification: {payments?.filter((p) => p.status === 'PENDING').length || 0}
                     </p>
                 </div>
             </div>
@@ -102,9 +82,6 @@ export default function SubscriptionPage() {
             {/* --- BOTTOM ROW: THE LEDGER TABLE --- */}
             <div className="mt-8">
                 <AdminBillingTable ledger={payments || []} branchId={branchId} />
-                <div className="bg-white border border-slate-200 rounded-2xl h-64 flex items-center justify-center text-slate-400 border-dashed">
-                    Billing Table goes here
-                </div>
             </div>
 
         </div>

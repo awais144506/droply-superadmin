@@ -60,14 +60,14 @@ export default function BranchDetails({ branch }: BranchDetailsProps) {
                     <span className="text-slate-500 flex items-center gap-2 font-medium">
                         <Globe className="h-4 w-4 text-slate-400" /> Latitude
                     </span>
-                    <span className="text-slate-900 font-bold font-mono text-[13px]">{branch.lat}</span>
+                    <span className="text-slate-900 font-bold font-mono text-[13px]">{branch.latitude}</span>
                 </div>
 
                 <div className="flex justify-between items-center">
                     <span className="text-slate-500 flex items-center gap-2 font-medium">
                         <Globe className="h-4 w-4 text-slate-400" /> Longitude
                     </span>
-                    <span className="text-slate-900 font-bold font-mono text-[13px]">{branch.lng}</span>
+                    <span className="text-slate-900 font-bold font-mono text-[13px]">{branch.longitude}</span>
                 </div>
 
             </CardContent>

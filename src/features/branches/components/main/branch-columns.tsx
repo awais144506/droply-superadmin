@@ -1,7 +1,9 @@
 import { User, Phone, Mail, CreditCard } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { Branch } from "../../types/branch";
 import { ColumnDef } from "@/lib/utils/components/TableCreateMachine";
 import { formatPhoneNumber } from "react-phone-number-input";
+import { getBranchWhatsAppUrl } from "@/lib/utils/functions/whatsapp/whatsapp-utils";
 
 export const getBranchColumns = (): ColumnDef<Branch>[] => [
     {
@@ -17,10 +19,10 @@ export const getBranchColumns = (): ColumnDef<Branch>[] => [
         render: (branch) => (
             <div>
                 <div className="font-bold text-slate-900 text-sm">
-                    {branch.name || branch.name}
+                    {branch.name}
                 </div>
                 <div className="text-xs text-slate-500 truncate max-w-xs mt-0.5">
-                    {branch.address || branch.address}
+                    {branch.address}
                 </div>
             </div>
         ),
@@ -72,14 +74,33 @@ export const getBranchColumns = (): ColumnDef<Branch>[] => [
     {
         header: "Status",
         render: (branch) => (
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold ${branch.status === 'ACTIVE'
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold ${
+                branch.status === 'ACTIVE'
                     ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
                     : branch.status === 'PAST_DUE'
                         ? "bg-amber-50 text-amber-600 border border-amber-100"
                         : "bg-rose-50 text-rose-600 border border-rose-100"
-                }`}>
+            }`}>
                 {branch.status}
             </span>
         ),
+    },
+    {
+        header: "WhatsApp",
+        render: (branch) => {
+            const whatsappUrl = getBranchWhatsAppUrl(branch);
+            return (
+                <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-600 hover:text-white transition-colors shadow-xs"
+                    title="Send WhatsApp message"
+                >
+                    <FaWhatsapp className="h-4 w-4" />
+                </a>
+            );
+        },
     },
 ];

@@ -16,7 +16,7 @@ export interface SubscriptionPayment {
     amountPaid: number;
     tier: SubscriptionTier;
     cycle: SubscriptionCycle;
-    type: SubscriptionPayment;
+    type: SubscriptionPaymentType;
     status: SubscriptionPaymentStatus;
     transactionId: string;
     imageUrl: string;

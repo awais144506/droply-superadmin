@@ -6,18 +6,23 @@ import ErrorBoundary from "@/app/error";
 import { LeadStats } from "@/features/leads/components/leads-stats";
 import { LeadsList } from "@/features/leads/components/leads-list";
 import ActivityLogsCard from "@/lib/utils/components/ActivityLogsMainPage";
+import MainPageHeader from "@/lib/utils/components/MainPageHeader";
 
 const WebsiteLeads = () => {
-    const { data, isLoading, isError, error } = useAllLeads();
+    const { data, isLoading, isError, error, refetch, isRefetching } = useAllLeads();
 
     if (isLoading) return <Loading text="Loading Stats..." />;
     if (isError) return <ErrorBoundary error={error?.message} />;
 
     return (
-        <div className="space-y-6 max-w-7xl mx-auto p-6">
+        <div className="space-y-6 p-6">
             <div>
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Lead Management</h1>
-                <p className="text-sm text-slate-500 mt-1">Track and update the status of your website leads.</p>
+                <MainPageHeader
+                    heading="Lead Management"
+                    description="Track and update the status of your website leads."
+                    onRefresh={refetch}
+                    isRefreshing={isRefetching}
+                />
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
                 <div className="xl:col-span-3 h-full">

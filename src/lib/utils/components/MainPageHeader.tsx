@@ -75,8 +75,6 @@ export default function MainPageHeader({
                 {/* Actions Container */}
                 <div className="flex items-center gap-3 shrink-0">
                     {children}
-                    
-                    {/* 🔥 Optional Refresh Button */}
                     {onRefresh && (
                         <button
                             onClick={onRefresh}

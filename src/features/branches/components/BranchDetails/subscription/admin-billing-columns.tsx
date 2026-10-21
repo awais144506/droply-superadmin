@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useState } from "react";
@@ -41,11 +42,11 @@ const ActionCell = ({
                             <Eye className="h-4 w-4" />
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-0 bg-transparent shadow-2xl">
+                    <DialogContent className="sm:max-w-125 p-0 overflow-hidden border-0 bg-transparent shadow-2xl">
                         <DialogTitle className="sr-only">Payment Receipt</DialogTitle>
                         <div className="relative flex flex-col items-center justify-center bg-black/90 p-4 rounded-xl">
                             {row.imageUrl.endsWith(".pdf") ? (
-                                <iframe src={row.imageUrl} className="w-full h-[600px] rounded-lg bg-white" />
+                                <iframe src={row.imageUrl} className="w-full h-150 rounded-lg bg-white" />
                             ) : (
                                 <img src={row.imageUrl} alt="Receipt" className="max-w-full max-h-[80vh] object-contain rounded-lg" />
                             )}
@@ -80,7 +81,7 @@ const ActionCell = ({
                                 <XCircle className="h-4 w-4" />
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="sm:max-w-106.25">
                             <DialogHeader>
                                 <DialogTitle className="text-rose-600">Reject Payment slip</DialogTitle>
                                 <DialogDescription>
@@ -118,7 +119,7 @@ const ActionCell = ({
                             <MessageSquareText className="h-4 w-4" />
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[420px]">
+                    <DialogContent className="sm:max-w-105">
                         <DialogHeader>
                             <DialogTitle className="flex items-center gap-2 text-rose-600">
                                 <XCircle className="h-5 w-5" /> Rejection Remarks

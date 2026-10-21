@@ -9,6 +9,5 @@ export const adminDashboardKeys = {
 
 // --- API FETCH ---
 export const fetchAdminLogs = async (): Promise<AdminLogsResponse> => {
-    const response = await apiClient.get("/subscription/admin/logs");
-    return response.data;
+    return await apiClient.get("/subscription/admin/logs");
 };

@@ -1,9 +1,9 @@
 // --- ENUMS / TYPES ---
-export type BranchStatus = "ACTIVE" | "PAST_DUE" | "SUSPENDED" | "ARCHIVED";
+export type BranchStatus = "ACTIVE" | "PAST_DUE" | "SUSPENDED";
 export type SubscriptionCycle = "TRIAL" | "MONTHLY" | "YEARLY";
 export type SubscriptionTier = "SILVER" | "GOLD" | "PLATINUM";
 export type ActivityLogStatus = "UNREAD" | "READ";
-export type StaffStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED";
+export type StaffStatus = "ACTIVE" | "SUSPENDED";
 
 // --- MODELS ---
 export interface BranchOwner {
@@ -52,8 +52,8 @@ export interface BranchDetails {
   name: string;
   phone: string;
   address: string;
-  lat: string;
-  lng: string;
+  latitude: string;
+  longitude: string;
   status: BranchStatus;
   createdAt: string;
   updatedAt?: string;

@@ -43,7 +43,6 @@ const BranchForm = ({
         else {
             createBranch(data);
         }
-        methods.reset();
     };
 
     const { formState, handleSubmit } = methods;

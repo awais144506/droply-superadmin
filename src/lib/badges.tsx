@@ -1,5 +1,5 @@
 import { Check, Ban, ShieldAlert, Clock, Sparkles, Crown, Zap } from "lucide-react";
-import { BranchStatus } from "@/types/branch";
+import { BranchStatus } from "@/features/branches/types/branch";
 
 export const getStatusBadge = (status: BranchStatus) => {
   switch (status) {

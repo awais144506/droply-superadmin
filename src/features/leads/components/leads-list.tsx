@@ -14,7 +14,7 @@ export function LeadsList({ leads }: { leads: WebsiteLead[] }) {
     const getWhatsAppUrl = (phone: string, name: string) => {
         if (!phone) return "#";
         const cleanPhone = phone.replace(/\D/g, ''); // Strip '+' and spaces for WhatsApp API
-        const text = encodeURIComponent(`Hi ${name}, we received your inquiry regarding Droply. How can we help you today?`);
+        const text = encodeURIComponent(`Hi ${name}, we received your inquiry regarding Droply. How can we help you?`);
         return `https://wa.me/${cleanPhone}?text=${text}`;
     };
 

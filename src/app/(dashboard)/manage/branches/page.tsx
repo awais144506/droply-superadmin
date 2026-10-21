@@ -15,20 +15,22 @@ export default function BranchesPage() {
   const search = searchParams.get("search") || undefined;
   const status = searchParams.get("status") || undefined;
 
-  const { data = { stats: null, branches: [], logs: [] }, isLoading, isError, error } = useAllBranches(search, status);
+  const { data = { stats: null, branches: [], logs: [] }, isLoading, isError, error, refetch, isRefetching } = useAllBranches(search, status);
   const { stats, branches, logs } = data;
 
   if (isError) return <ErrorBoundary error={error.message} />
   if (isLoading) return <Loading text="Loading Branches..." />
 
   return (
-    <div className="space-y-6 min-w-6xl mx-auto p-6">
+    <div className="space-y-6 p-6">
 
       <MainPageHeader
         heading="Manage Branches"
         btnText="New Branch"
         href="/manage/branches/create-new"
         description="Manage and create your branches."
+        onRefresh={refetch}
+        isRefreshing={isRefetching}
       />
 
       {isLoading || !stats ? (

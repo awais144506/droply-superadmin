@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { BankDetailEntity } from "../api/use-bank-details";
+import { PlatFormBankAccount } from "../types/bank";
 
 interface BankDetailCardProps {
-  account: BankDetailEntity;
-  onEdit: (account: BankDetailEntity) => void;
+  account: PlatFormBankAccount;
+  onEdit: (account: PlatFormBankAccount) => void;
   onDelete: (id: string) => void;
 }
 
@@ -70,11 +70,11 @@ export function BankDetailCard({ account, onEdit, onDelete }: BankDetailCardProp
           </p>
           <p className="text-sm text-slate-900">
             <span className="font-semibold text-slate-500 w-24 inline-block">A/C Title:</span> 
-            {account.title}
+            {account.accountTitle}
           </p>
           <p className="text-sm text-slate-900">
             <span className="font-semibold text-slate-500 w-24 inline-block">A/C Number:</span> 
-            <span className="font-mono font-medium">{account.number}</span>
+            <span className="font-mono font-medium">{account.accountNumber}</span>
           </p>
           {account.iban && (
             <p className="text-sm text-slate-900">

@@ -14,20 +14,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useBankDetails, useDeleteBankDetail, BankDetailEntity } from "@/features/bank-details/api/use-bank-details";
+import { useBankDetails, useDeleteBankDetail, } from "@/features/bank-details/api/use-bank-details";
 import { BankDetailCard } from "@/features/bank-details/components/bank-detail-card";
 import { BankForm } from "@/features/bank-details/components/bank-form";
 import { toast } from "sonner";
+import { PlatFormBankAccount } from "@/features/bank-details/types/bank";
 
 export default function PlatformBankAccountsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [selectedAccount, setSelectedAccount] = useState<BankDetailEntity | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<PlatFormBankAccount | null>(null);
 
   const { data: accounts, isLoading } = useBankDetails();
   const { mutate: deleteBank, isPending: isDeleting } = useDeleteBankDetail();
 
-  const handleEdit = (account: BankDetailEntity) => {
+  const handleEdit = (account: PlatFormBankAccount) => {
     setSelectedAccount(account);
     setIsFormOpen(true);
   };
@@ -73,7 +74,7 @@ export default function PlatformBankAccountsPage() {
         </div>
         <Button 
           onClick={() => { setSelectedAccount(null); setIsFormOpen(true); }}
-          className="bg-sky-600 hover:bg-sky-700 text-white cursor-pointer shadow-sm"
+          variant="default"
         >
           <Plus className="h-4 w-4 mr-2" /> Add Bank Account
         </Button>
