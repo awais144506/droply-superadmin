@@ -1,7 +1,8 @@
 import { formatDistanceToNow } from "date-fns";
 import { WebsiteLead, LeadStatus } from "@/features/leads/types";
 import { useUpdateLeadStatus } from "@/features/leads/api/use-leads";
-import { MapPin, Phone, MessageCircle, ArrowRight, CheckCircle2, XCircle, Calendar } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
+import { MapPin, Phone, ArrowRight, CheckCircle2, XCircle, Calendar } from "lucide-react";
 import { formatPhoneNumber } from "react-phone-number-input";
 
 export function LeadsList({ leads }: { leads: WebsiteLead[] }) {
@@ -117,7 +118,7 @@ export function LeadsList({ leads }: { leads: WebsiteLead[] }) {
                                                     className="inline-flex items-center justify-center p-1 bg-emerald-100 text-emerald-600 hover:bg-emerald-200 hover:text-emerald-700 rounded-md transition-colors"
                                                     title="Message on WhatsApp"
                                                 >
-                                                    <MessageCircle className="h-3.5 w-3.5" />
+                                                    <FaWhatsapp className="h-3.5 w-3.5" />
                                                 </a>
                                             )}
                                         </div>
