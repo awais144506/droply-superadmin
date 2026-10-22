@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreVertical, Pencil, Trash2, QrCode } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, QrCode, Eye, EyeOff } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,9 +11,10 @@ interface BankDetailCardProps {
   account: PlatFormBankAccount;
   onEdit: (account: PlatFormBankAccount) => void;
   onDelete: (id: string) => void;
+  onToggleStatus: (id: string, currentStatus: boolean) => void;
 }
 
-export function BankDetailCard({ account, onEdit, onDelete }: BankDetailCardProps) {
+export function BankDetailCard({ account, onEdit, onDelete, onToggleStatus }: BankDetailCardProps) {
   return (
     <Card className={`shadow-sm border-slate-200 overflow-hidden transition-all ${!account.isActive && "opacity-60 grayscale"}`}>
       <CardHeader className="p-4 border-b border-slate-100 flex flex-row items-center justify-between bg-slate-50/50">
@@ -30,7 +31,21 @@ export function BankDetailCard({ account, onEdit, onDelete }: BankDetailCardProp
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuContent align="end" className="w-44">
+            <DropdownMenuItem 
+              onClick={() => onToggleStatus(account.id, account.isActive)} 
+              className="cursor-pointer text-xs"
+            >
+              {account.isActive ? (
+                <>
+                  <EyeOff className="h-3.5 w-3.5 mr-2 text-slate-500" /> Hide Account
+                </>
+              ) : (
+                <>
+                  <Eye className="h-3.5 w-3.5 mr-2 text-emerald-600" /> Set Active
+                </>
+              )}
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onEdit(account)} className="cursor-pointer text-xs">
               <Pencil className="h-3.5 w-3.5 mr-2" /> Edit
             </DropdownMenuItem>

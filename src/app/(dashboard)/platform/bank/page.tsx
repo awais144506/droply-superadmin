@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useBankDetails, useDeleteBankDetail, } from "@/features/bank-details/api/use-bank-details";
+import { useBankDetails, useDeleteBankDetail, useUpdateStatus } from "@/features/bank-details/api/use-bank-details";
 import { BankDetailCard } from "@/features/bank-details/components/bank-detail-card";
 import { BankForm } from "@/features/bank-details/components/bank-form";
 import { toast } from "sonner";
@@ -27,10 +27,15 @@ export default function PlatformBankAccountsPage() {
 
   const { data: accounts, isLoading } = useBankDetails();
   const { mutate: deleteBank, isPending: isDeleting } = useDeleteBankDetail();
+  const { mutate: updateStatus } = useUpdateStatus();
 
   const handleEdit = (account: PlatFormBankAccount) => {
     setSelectedAccount(account);
     setIsFormOpen(true);
+  };
+
+  const handleStatusToggle = (id: string, currentStatus: boolean) => {
+    updateStatus({ id, status: !currentStatus });
   };
 
   const handleDeletePrompt = (id: string) => {
@@ -93,7 +98,8 @@ export default function PlatformBankAccountsPage() {
               key={account.id} 
               account={account} 
               onEdit={handleEdit} 
-              onDelete={handleDeletePrompt} 
+              onDelete={handleDeletePrompt}
+              onToggleStatus={handleStatusToggle}
             />
           ))}
         </div>

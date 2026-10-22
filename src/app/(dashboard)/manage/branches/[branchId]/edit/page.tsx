@@ -19,6 +19,7 @@ const EditBranch = () => {
 
   // Map the backend payload (flattened branch + owner) to your form schema
   const initialData = {
+    id: data.branch.id || "",
     name: data.branch.name || "",
     phone: data.branch.phone || "",
     address: data.branch.address || "",
@@ -31,12 +32,16 @@ const EditBranch = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 p-6">
+    <div className="space-y-6 p-6">
       <CreateFormHeader
         title="Edit Branch"
         href={`/manage/branches/${branchId}`}
+        breadcrumbs={[
+          { label: "Branches", href: "/manage/branches" },
+          { label: initialData.name, href: `/manage/branches/${initialData.id}` },
+          { label: "Edit Branch" }
+        ]}
       />
-
       <BranchForm
         branchId={branchId}
         initialData={initialData}

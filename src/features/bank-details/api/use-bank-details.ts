@@ -40,6 +40,20 @@ export function useUpdateBankDetail() {
   });
 }
 
+export function useUpdateStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: boolean}) => bankService.updateStatus(id, status),
+    onSuccess: () => {
+      toast.success("Bank status updated successfully")
+      queryClient.invalidateQueries({ queryKey: bankKeys.lists() });
+    },
+    onError: (err) => {
+      toast.error(err.message)
+    }
+  });
+}
+
 export function useDeleteBankDetail() {
   const queryClient = useQueryClient();
   return useMutation({

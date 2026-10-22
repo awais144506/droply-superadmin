@@ -13,8 +13,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 type Props = {
-    heading: string;
-    description: string;
+    heading?: string;
+    description?: string;
     href?: string;
     btnText?: string;
     isDisabled?: boolean;
@@ -42,20 +42,24 @@ export default function MainPageHeader({
             {breadcrumbs && breadcrumbs.length > 0 && (
                 <Breadcrumb>
                     <BreadcrumbList>
-                        {breadcrumbs.map((crumb, index) => {
+                        {breadcrumbs.map((item, index) => {
                             const isLast = index === breadcrumbs.length - 1;
                             return (
-                                <React.Fragment key={crumb.label}>
+                                <React.Fragment key={index}>
                                     <BreadcrumbItem>
-                                        {isLast || !crumb.href ? (
-                                            <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                                        ) : (
+                                        {!isLast && item.href ? (
                                             <BreadcrumbLink>
-                                                <Link href={crumb.href}>{crumb.label}</Link>
+                                                <Link href={item.href} className="text-slate-500 hover:text-slate-900 transition-colors">
+                                                    {item.label}
+                                                </Link>
                                             </BreadcrumbLink>
+                                        ) : (
+                                            <BreadcrumbPage className="text-sky-600 font-semibold">
+                                                {item.label}
+                                            </BreadcrumbPage>
                                         )}
                                     </BreadcrumbItem>
-                                    {!isLast && <BreadcrumbSeparator />}
+                                    {!isLast && <BreadcrumbSeparator className="text-slate-400" />}
                                 </React.Fragment>
                             );
                         })}
@@ -79,9 +83,8 @@ export default function MainPageHeader({
                         <button
                             onClick={onRefresh}
                             disabled={isRefreshing}
-                            className={`flex items-center justify-center h-10 w-10 rounded-md border border-slate-200 bg-white hover:bg-slate-100 transition-colors ${
-                                isRefreshing ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-                            }`}
+                            className={`flex items-center justify-center h-10 w-10 rounded-md border border-slate-200 bg-white hover:bg-slate-100 transition-colors ${isRefreshing ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                                }`}
                             title="Refresh Data"
                         >
                             <RefreshCw className={`h-4 w-4 text-slate-700 ${isRefreshing ? "animate-spin" : ""}`} />
