@@ -1,11 +1,22 @@
 import { History } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { ActivityLog } from "@/types/ActivityLog";
 import { getActionBadge } from "../functions/activity-logs-badges";
+import { ActivityLogActionEnums } from "@/types/ActivityLog";
+
+// Flexible local interface to accommodate logs from any feature module safely
+export interface CardActivityLog {
+    id: string;
+    branchId?: string;
+    userName: string;
+    action: ActivityLogActionEnums | string;
+    type: string;
+    description: string;
+    createdAt: string;
+}
 
 interface ActivityLogsCardProps {
     title?: string;
-    logs?: ActivityLog[];
+    logs?: CardActivityLog[];
 }
 
 export default function ActivityLogsCard({ title = "Recent Activity", logs = [] }: ActivityLogsCardProps) {
@@ -23,7 +34,8 @@ export default function ActivityLogsCard({ title = "Recent Activity", logs = [] 
 
             <div className="max-h-96 overflow-y-auto custom-scrollbar p-4 space-y-4">
                 {logs.map((log) => {
-                    const { icon: Icon, classes } = getActionBadge(log.action);
+                    // Safely cast action to match badge handler requirements
+                    const { icon: Icon, classes } = getActionBadge(log.action as ActivityLogActionEnums);
 
                     return (
                         <div key={log.id} className="flex gap-4 group">
