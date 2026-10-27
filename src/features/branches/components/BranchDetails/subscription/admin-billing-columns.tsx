@@ -35,7 +35,7 @@ const ActionCell = ({
         <div className="flex items-center gap-1.5">
             
             {/* 1. View Receipt (Always Available) */}
-            {row.imageUrl && (
+            {row.receiptUrl && (
                 <Dialog>
                     <DialogTrigger>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-sky-600 hover:bg-sky-50" title="View Receipt">
@@ -45,10 +45,10 @@ const ActionCell = ({
                     <DialogContent className="sm:max-w-125 p-0 overflow-hidden border-0 bg-transparent shadow-2xl">
                         <DialogTitle className="sr-only">Payment Receipt</DialogTitle>
                         <div className="relative flex flex-col items-center justify-center bg-black/90 p-4 rounded-xl">
-                            {row.imageUrl.endsWith(".pdf") ? (
+                            {row.receiptUrl.endsWith(".pdf") ? (
                                 <iframe src={row.imageUrl} className="w-full h-150 rounded-lg bg-white" />
                             ) : (
-                                <img src={row.imageUrl} alt="Receipt" className="max-w-full max-h-[80vh] object-contain rounded-lg" />
+                                <img src={row.receiptUrl} alt="Receipt" className="max-w-full max-h-[80vh] object-contain rounded-lg" />
                             )}
                         </div>
                     </DialogContent>
