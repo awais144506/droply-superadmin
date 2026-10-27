@@ -19,7 +19,7 @@ export interface SubscriptionPayment {
     type: SubscriptionPaymentType;
     status: SubscriptionPaymentStatus;
     transactionId: string;
-    imageUrl: string;
+    receiptUrl: string;
     remarks: string;
     isRenewal: boolean;
     createdAt: string;

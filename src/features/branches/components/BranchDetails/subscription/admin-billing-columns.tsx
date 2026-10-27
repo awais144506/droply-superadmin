@@ -14,11 +14,11 @@ interface AdminTableActions {
     onReject: (id: string, remarks: string) => void;
 }
 
-const ActionCell = ({ 
-    row, 
-    actions 
-}: { 
-    row: SubscriptionPayment; 
+const ActionCell = ({
+    row,
+    actions
+}: {
+    row: SubscriptionPayment;
     actions: AdminTableActions;
 }) => {
     const [remarks, setRemarks] = useState("");
@@ -33,7 +33,7 @@ const ActionCell = ({
 
     return (
         <div className="flex items-center gap-1.5">
-            
+
             {/* 1. View Receipt (Always Available) */}
             {row.receiptUrl && (
                 <Dialog>
@@ -44,11 +44,15 @@ const ActionCell = ({
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-125 p-0 overflow-hidden border-0 bg-transparent shadow-2xl">
                         <DialogTitle className="sr-only">Payment Receipt</DialogTitle>
-                        <div className="relative flex flex-col items-center justify-center bg-black/90 p-4 rounded-xl">
+                        <div className="relative flex flex-col items-center justify-center p-2 rounded-xl bg-slate-50 border border-slate-200 overflow-hidden">
                             {row.receiptUrl.endsWith(".pdf") ? (
-                                <iframe src={row.imageUrl} className="w-full h-150 rounded-lg bg-white" />
+                                <iframe src={row.receiptUrl} className="w-full h-125 rounded-lg bg-white" />
                             ) : (
-                                <img src={row.receiptUrl} alt="Receipt" className="max-w-full max-h-[80vh] object-contain rounded-lg" />
+                                <img
+                                    src={row.receiptUrl}
+                                    alt="Payment Receipt"
+                                    className="w-full max-h-[70vh] object-contain rounded-lg shadow-sm bg-white"
+                                />
                             )}
                         </div>
                     </DialogContent>
@@ -59,9 +63,9 @@ const ActionCell = ({
             {row.status === "PENDING" && (
                 <>
                     {/* Approve Button */}
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => {
                             const actionText = row.isRenewal ? "extend their billing date" : "upgrade their current cycle";
                             if (window.confirm(`Approve this payment and ${actionText}?`)) {
@@ -98,9 +102,9 @@ const ActionCell = ({
                             </div>
                             <DialogFooter>
                                 <Button variant="outline" onClick={() => setIsRejectOpen(false)}>Cancel</Button>
-                                <Button 
-                                    onClick={handleRejectSubmit} 
-                                    disabled={!remarks.trim()} 
+                                <Button
+                                    onClick={handleRejectSubmit}
+                                    disabled={!remarks.trim()}
                                     className="bg-rose-600 hover:bg-rose-700 text-white font-bold"
                                 >
                                     Confirm Rejection
