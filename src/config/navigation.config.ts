@@ -1,65 +1,94 @@
 import {
-  LayoutDashboard,
   Building2,
-  Receipt,
-  Users,
-  ShieldCheck,
-  Settings,
-  HelpCircle,
-  type LucideIcon,
+  CreditCard,
+  Globe,
+  Banknote,
+  LucideIcon,
 } from "lucide-react";
+
+export type UserRole = "SUPER_ADMIN" | "SUPPORT_ADMIN";
 
 export interface NavItem {
   title: string;
   url: string;
   icon: LucideIcon;
   badge?: string;
+  allowedRoles: UserRole[];
 }
 
 export interface NavGroup {
   label: string;
+  headerColor: {
+    text: string;
+    dot: string;
+    border: string;
+    bgHover: string;
+  };
   items: NavItem[];
 }
 
-export const superAdminNavigation: NavGroup[] = [
+export const BRANCH_NAV_CONFIG: NavGroup[] = [
   {
-    label: "Core Management",
+    label: "TENANTS & SALES",
+    headerColor: {
+      text: "text-sky-600 dark:text-sky-400",
+      dot: "bg-sky-500",
+      border: "border-sky-500/20",
+      bgHover: "hover:bg-sky-500/5",
+    },
     items: [
       {
-        title: "Overview",
-        url: "/app",
-        icon: LayoutDashboard,
-      },
-      {
         title: "Branches",
-        url: "/branches",
+        url: "/manage/branches",
         icon: Building2,
+        allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
       },
       {
-        title: "Subscriptions & Invoices",
-        url: "#",
-        icon: Receipt,
+        title: "Website Leads",
+        url: "/manage/leads",
+        icon: Globe,
+        allowedRoles: ["SUPER_ADMIN", "SUPPORT_ADMIN"],
       },
     ],
   },
   {
-    label: "System & Governance",
+    label: "PLATFORM SETTINGS",
+    headerColor: {
+      text: "text-rose-600 dark:text-rose-400",
+      dot: "bg-rose-500",
+      border: "border-rose-500/20",
+      bgHover: "hover:bg-rose-500/5",
+    },
     items: [
+      // {
+      //   title: "Team & Admins", // Renamed for clarity
+      //   url: "/platform/team",
+      //   icon: Users,
+      //   badge: "Admin",
+      //   allowedRoles: ["SUPER_ADMIN"],
+      // },
       {
-        title: "Platform Users",
-        url: "#",
-        icon: Users,
+        title: "Bank Details", // Renamed for clarity
+        url: "/platform/bank",
+        icon: Banknote,
+        badge: "Admin",
+        allowedRoles: ["SUPER_ADMIN"],
       },
-      {
-        title: "Security",
-        url: "#",
-        icon: ShieldCheck,
-      },
-      {
-        title: "Global Settings",
-        url: "#",
-        icon: Settings,
-      },
+      // {
+      //   title: "Pricing Plans", // Renamed to avoid confusion with active tenant subscriptions
+      //   url: "/platform/plans",
+      //   icon: Layers,
+      //   badge: "Admin",
+      //   allowedRoles: ["SUPER_ADMIN"],
+      // },
+      // {
+      //   title: "Global Settings",
+      //   url: "/platform/settings",
+      //   icon: Settings,
+      //   badge: "Admin",
+      //   allowedRoles: ["SUPER_ADMIN"],
+      // },
+      // Activity Logs & Audit removed - will be handled via dashboard widgets
     ],
   },
 ];

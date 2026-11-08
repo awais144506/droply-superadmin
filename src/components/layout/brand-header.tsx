@@ -1,6 +1,6 @@
 "use client";
 
-import { Droplets } from "lucide-react";
+import Image from "next/image";
 import {
   SidebarMenu,
   SidebarMenuItem,
@@ -11,14 +11,29 @@ export function BrandHeader() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <SidebarMenuButton size="lg" className="w-full flex items-center gap-3 hover:bg-transparent">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-black text-white dark:bg-white dark:text-black shadow-sm">
-            <Droplets className="h-5 w-5" />
+        <SidebarMenuButton
+          size="lg"
+          className="w-full flex items-center gap-3.5 hover:bg-sidebar-accent/50 transition-colors cursor-default px-2.5 py-2"
+        >
+          {/* Logo Container */}
+          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 dark:bg-sky-950/50 border border-sky-100 dark:border-sky-900 shadow-sm overflow-hidden p-1.5 transition-transform hover:scale-105">
+            <Image
+              src="/logo.png"
+              alt="Droply Logo"
+              fill
+              className="object-contain p-1"
+              priority
+            />
           </div>
-          <div className="flex flex-col gap-0.5 leading-none text-left">
-            <span className="font-bold text-sm tracking-tight">DroplyPK</span>
-            <span className="text-[10px] text-muted-foreground tracking-wider font-mono font-medium">
-              SUPERADMIN V1.0
+
+          {/* Brand Name & Subtitle */}
+          <div className="flex flex-col justify-center leading-none text-left overflow-hidden">
+            <span className="text-base font-bold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+              Droply
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-sky-500 animate-pulse" />
+            </span>
+            <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 tracking-wide mt-1">
+              Droply Management
             </span>
           </div>
         </SidebarMenuButton>
