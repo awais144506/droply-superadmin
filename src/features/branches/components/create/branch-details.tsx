@@ -2,6 +2,7 @@ import { Building2 } from "lucide-react";
 import { FormInput } from "@/components/ui/form-input";
 import { FormPhoneInput } from "@/components/ui/form-phone-input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormCoordinatesInput } from "@/components/ui/FormCoordinatesInput";
 
 export default function BranchDetails({ isEditing }: { isEditing: boolean }) {
     return (
@@ -39,26 +40,12 @@ export default function BranchDetails({ isEditing }: { isEditing: boolean }) {
                     />
                 </div>
 
-                {/* Coordinates Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                        <FormInput
-                            label="Latitude"
-                            required
-                            type="number"
-                            placeholder="31.5204"
-                            name="latitude"
-                        />
-                    </div>
-                    <div className="space-y-1.5">
-                        <FormInput
-                            label="Longitude"
-                            required
-                            type="number"
-                            placeholder="74.3587"
-                            name="longitude"
-                        />
-                    </div>
+                <div >
+                    <FormCoordinatesInput
+                        latName="latitude"
+                        lngName="longitude"
+                        required
+                    />
                 </div>
                 {!isEditing && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -19,8 +19,8 @@ export default function BranchDetailPage() {
     const { data, isLoading, isError, error } = useBranchById(branchId);
     const { branch, owner, subscription, staff, customers } = data || {};
 
-    if (isLoading) return <Loading text="Loading Branch..." />
-    if (isError || !branch) return <Error error={error?.message} />
+    if (isLoading || !branch) return <Loading text="Loading Branch Details..." />
+    if (isError) return <Error error={error?.message} />
 
     const lat = Number(branch.latitude) || 33.6844;
     const lng = Number(branch.longitude) || 73.0479;
