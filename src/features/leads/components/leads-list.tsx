@@ -12,34 +12,70 @@ export function LeadsList({ leads }: { leads: WebsiteLead[] }) {
         updateStatus({ id, status: newStatus });
     };
 
-    const getWhatsAppUrl = (phone: string, name: string) => {
+    const getWhatsAppUrl = (phone: string, name: string, status: LeadStatus) => {
         if (!phone) return "#";
-        const cleanPhone = phone.replace(/\D/g, ''); // Strip '+' and spaces for WhatsApp API
-        const text = encodeURIComponent(`Hi ${name}, we received your inquiry regarding Droply. How can we help you?`);
-        return `https://wa.me/${cleanPhone}?text=${text}`;
+        const cleanPhone = phone.replace(/\D/g, ""); // Strip '+' and spaces for WhatsApp API
+
+        if (status === "MEETING") {
+            const demoMessage = [
+                `Hi ${name}, your *Droply* demo account is ready! You have *24 hours* to test the dashboard.`,
+                ``,
+                `*Portal Link:* https://app.dedroply.com`,
+                `*Login ID:* droplyadmin@gmail.com`,
+                `*Login Method:* Enter the email above to log in — message us right here and we will share the *OTP* with you.`,
+                ``,
+                `Feel free to explore orders, inventory, customer ledgers, and rider tracking. Message us anytime if you have questions or want a quick walkthrough call.`,
+            ].join("\n");
+
+            return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(demoMessage)}`;
+        }
+
+        const welcomeMessage = [
+            `Assalam-o-Alaikum ${name}! 👋`,
+            `Welcome to *Droply*! Thank you for reaching out.`,
+            ``,
+            `To get your *24-hour Temporary Demo ID* to explore the dashboard, please share:`,
+            `• *Owner Name:*`,
+            `• *Business Name:*`,
+            `• *Business Category:* (Water Business / LPG Cylinder / Dairy)`,
+            `• *Address:*`,
+            ``,
+            `--------------------------------`,
+            ``,
+            `السلام علیکم ${name}!`,
+            `*Droply* میں خوش آمدید۔ رابطہ کرنے کا شکریہ!`,
+            ``,
+            `ڈیش بورڈ کا *24 گھنٹے کا عارضی ڈیمو (Demo ID)* حاصل کرنے کے لیے براہ کرم درج ذیل تفصیلات بھیجیں:`,
+            `• مالک کا نام`,
+            `• کاروبار کا نام`,
+            `• کاروبار کی قسم (واٹر بزنس / LPG سلنڈر / ڈیری)`,
+            `• پتہ`,
+        ].join("\n");
+
+        return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(welcomeMessage)}`;
     };
 
     const renderActionCTA = (lead: WebsiteLead) => {
         if (lead.status === "NEW") {
             return (
-                <button 
-                    onClick={() => handleStatusUpdate(lead.id, "CONTACTED")} 
-                    disabled={isPending} 
+                <button
+                    onClick={() => handleStatusUpdate(lead.id, "CONTACTED")}
+                    disabled={isPending}
                     className="group flex items-center justify-center gap-1.5 w-full px-3 py-2 text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg transition-all disabled:opacity-50"
                 >
-                    <Phone className="h-3.5 w-3.5" /> Mark Contacted 
+                    <Phone className="h-3.5 w-3.5" /> Mark Contacted
                     <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
                 </button>
             );
         }
         if (lead.status === "CONTACTED") {
             return (
-                <button 
-                    onClick={() => handleStatusUpdate(lead.id, "MEETING")} 
-                    disabled={isPending} 
+                <button
+                    onClick={() => handleStatusUpdate(lead.id, "MEETING")}
+                    disabled={isPending}
                     className="group flex items-center justify-center gap-1.5 w-full px-3 py-2 text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg transition-all disabled:opacity-50"
                 >
-                    <Calendar className="h-3.5 w-3.5" /> Set Meeting 
+                    <Calendar className="h-3.5 w-3.5" /> Set Meeting
                     <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
                 </button>
             );
@@ -47,17 +83,17 @@ export function LeadsList({ leads }: { leads: WebsiteLead[] }) {
         if (lead.status === "MEETING") {
             return (
                 <div className="flex items-center gap-2 w-full">
-                    <button 
-                        onClick={() => handleStatusUpdate(lead.id, "CONVERTED")} 
-                        disabled={isPending} 
+                    <button
+                        onClick={() => handleStatusUpdate(lead.id, "CONVERTED")}
+                        disabled={isPending}
                         className="flex-1 flex items-center justify-center gap-1 px-2 py-2 text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg transition-all disabled:opacity-50"
                         title="Convert Lead"
                     >
                         <CheckCircle2 className="h-3.5 w-3.5" /> Convert
                     </button>
-                    <button 
-                        onClick={() => handleStatusUpdate(lead.id, "REJECTED")} 
-                        disabled={isPending} 
+                    <button
+                        onClick={() => handleStatusUpdate(lead.id, "REJECTED")}
+                        disabled={isPending}
                         className="flex-1 flex items-center justify-center gap-1 px-2 py-2 text-xs font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg transition-all disabled:opacity-50"
                         title="Reject Lead"
                     >
@@ -111,8 +147,8 @@ export function LeadsList({ leads }: { leads: WebsiteLead[] }) {
                                                 {lead.phone ? formatPhoneNumber(lead.phone) : "N/A"}
                                             </div>
                                             {lead.phone && (
-                                                <a 
-                                                    href={getWhatsAppUrl(lead.phone, lead.name)}
+                                                <a
+                                                    href={getWhatsAppUrl(lead.phone, lead.name, lead.status)}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="inline-flex items-center justify-center p-1 bg-emerald-100 text-emerald-600 hover:bg-emerald-200 hover:text-emerald-700 rounded-md transition-colors"
