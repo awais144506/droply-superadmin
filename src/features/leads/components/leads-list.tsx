@@ -25,6 +25,11 @@ export function LeadsList({ leads }: { leads: WebsiteLead[] }) {
                 `*Login Method:* Enter the email above to log in — message us right here and we will share the *OTP* with you.`,
                 ``,
                 `Feel free to explore orders, inventory, customer ledgers, and rider tracking. Message us anytime if you have questions or want a quick walkthrough call.`,
+                ``,
+                `--------------------------------`,
+                `*User Support:* +923136903582`,
+                `*Follow our WhatsApp Channel for future updates & features:*`,
+                `https://whatsapp.com/channel/0029Vb9R9oY0lwgqL0AmYR26`,
             ].join("\n");
 
             return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(demoMessage)}`;
